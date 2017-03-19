@@ -1,0 +1,45 @@
+@import '~foundation-sites/scss/foundation';
+// @import '~foundation-sites/scss/grid/grid';
+
+@include foundation-global-styles;
+@include foundation-flex-grid;
+// @include foundation-forms;
+// @include foundation-typography;
+
+@import "vars";
+@import "modal";
+
+html, body {
+  height: 100%;
+}
+
+#mountIncludeGallery {
+  font-family: 'Open Sans', Verdana, sans-serif;
+  font-size: 12px;
+}
+
+.in-gallery {
+
+  padding: 30px 15px;
+}
+
+.in-gallery_photo {
+  display: inline-block;
+  box-shadow: 0 0 2px rgba(0,0,0,0.33);
+  background-color: #fff;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.in-gallery_photo-title {
+  padding-bottom: 5px;
+  color: #666;
+}
+
+.in-gallery_photo-img {
+  display: block;
+  height: 100px;
+  width: auto;
+  border-radius: 2px;
+}

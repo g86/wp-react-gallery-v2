@@ -1,0 +1,21 @@
+.in-gallery__files-to-upload {
+
+}
+
+.in-gallery__file-to-upload {
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+  padding: 5px;
+  margin-bottom: 15px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.in-gallery__file-summary {
+  margin-left: 10px;
+  h2, p {
+    margin: 0;
+  }
+}
