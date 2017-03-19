@@ -6,9 +6,9 @@ class Photo extends Component {
     const { photo, index, onClick } = this.props
     return (
       <div className="in-gallery_photo" key={`${index}_${photo.id}`}>
-        <div className="in-gallery_photo-title">{photo.title}</div>
+        <div className="in-gallery_photo-title">{photo.title || 'No title...'}</div>
         <a className="in-gallery_photo-link" onClick={onClick.bind(this, photo.id, index)}>
-          <img className="in-gallery_photo-img" src={photo.photoThumbnail || photo.photo_path} alt={photo.alt}/>
+          <img className="in-gallery_photo-img" src={photo.photoThumbnail} alt={photo.alt}/>
         </a>
       </div>
     )

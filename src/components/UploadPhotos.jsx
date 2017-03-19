@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import UploadsList from './UploadsList'
 import Axios from 'axios'
+import {formatPhotosObject} from '../helpers/index'
 
 class UploadPhotos extends Component {
 
@@ -49,7 +50,7 @@ class UploadPhotos extends Component {
     return Axios.post(uploadUrl, data, config)
       .then(function (res) {
         console.log("Api response: ", res)
-        self.props.onUpload(res.data.allPhotos)
+        self.props.onUpload(formatPhotosObject(res.data.allPhotos))
         self.updateFileStatus(fileToBeUploaded, 'uploaded')
         self.uploadNextFile()
       })
@@ -124,6 +125,7 @@ class UploadPhotos extends Component {
   }
 
   resetUpload = (event) => {
+    this.refs.uploadForm.reset()
     event.preventDefault()
     event.stopPropagation()
     this.setState({files: []})
@@ -133,7 +135,7 @@ class UploadPhotos extends Component {
     const {files} = this.state
     return (
       <div>
-        <form name="gallery-upload">
+        <form name="gallery-upload" ref="uploadForm">
           <input type="file" name="galleryFiles[]" multiple="multiple" ref="galleryFiles"
                  onChange={this.onSelectionChange.bind(this)}/>
           <button onClick={this.resetUpload}>Reset</button>

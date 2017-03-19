@@ -4,6 +4,7 @@ import Photos from './components/Photos'
 import Modal from './components/Modal'
 import UploadPhotos from './components/UploadPhotos'
 import Axios from 'axios'
+import {formatPhotosObject} from './helpers/index'
 
 class App extends Component {
   constructor(props) {
@@ -32,7 +33,7 @@ class App extends Component {
     return Axios.get(photosUrl)
       .then(function (res) {
         console.log("Api response: ", res)
-        self.setState({photos: res.data.allPhotos})
+        self.setState({photos: formatPhotosObject(res.data.allPhotos)})
       })
       .catch(function (err) {
         throw err

@@ -1,7 +1,7 @@
 <script type="text/javascript">
     window.activePostId = <?php echo intval($_GET['galleryID']); ?>;
     window.uploadUrl = '<?php echo '/wp-content/plugins/include-gallery/api.php?action=upload'; ?>';
-    window.photosUrl = '<?php echo '/wp-content/plugins/include-gallery/api.php?action=photos&referenceID=' . intval($_GET['post']); ?>';
+    window.photosUrl = '<?php echo '/wp-content/plugins/include-gallery/api.php?action=photos&referenceID=' . intval($_GET['galleryID']); ?>';
 </script>
 
 <div class="wrap">
