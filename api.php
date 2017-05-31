@@ -41,9 +41,15 @@ function endpoint_upload() {
 
     $objectID = intval($_POST['referenceID'], 10);
 
+    $fileInfo = array(
+        'title' => $_POST['displayName'],
+        'description' => $_POST['description'],
+        'alt' => $_POST['alt']
+    );
+
     if ($objectID > 0) {
         $oUploadifiedPhotosR = new UploadifiedPhotosR($objectID);
-        $responseData = array_merge($responseData, $oUploadifiedPhotosR->uploadPhoto($objectID));
+        $responseData = array_merge($responseData, $oUploadifiedPhotosR->uploadPhoto($objectID, $fileInfo));
     } else {
         $responseData['error'] = 'Reference ID is missing.';
     }

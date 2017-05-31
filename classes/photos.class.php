@@ -18,12 +18,12 @@
 			}
 			return $aIDs;
 		}
-		public function uploadPhoto($iObjectID) {
+		public function uploadPhoto($iObjectID, $fileInfo) {
 			ini_set('memory_limit','512M');
             $responseData = array();
 			if (!empty($_FILES) && $iObjectID > 0) {
 				$tempFile = $_FILES['file']['tmp_name'];
-				
+
 				//$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
 				
 				$sWatermark = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/plugins/uploadified-gallery/watermarks/impressions-watermark.png';
@@ -49,7 +49,7 @@
 					//$sWatermarkedCopyPath = preg_replace('|nt-originals|Uis','nt-photos',$sourceFile);
 					
 					$this->resizeSavedPhoto($sRelativeOriginalPath,$sRelativeOriginalPath,$sWatermark);
-					$iNewPhotoID = $this->savePhotoData($iObjectID,$sRelativeOriginalPath);
+					$iNewPhotoID = $this->savePhotoData($iObjectID,$sRelativeOriginalPath,$fileInfo);
                     $responseData['uploadedPhoto'] = $this->getNewPhotoData($iNewPhotoID );
                     $responseData['allPhotos'] = $this->getPhotos();
                     $responseData['status'] = 'OK';
@@ -63,10 +63,32 @@
 			}
 			return $responseData;
 		}
-		public function savePhotoData($iObjectID,$originalFile) {
+		public function savePhotoData($iObjectID,$filePath,$fileInfo) {
 			global $wpdb;
-			$wpdb->query("INSERT INTO uploadified_photos (id,object_id,photo_path,is_deleted,is_public) VALUES ('','{$iObjectID}','{$originalFile}','0','1')");
-			return mysql_insert_id();
+
+            $q = "INSERT INTO uploadified_photos (
+                    `id`,
+                    `object_id`,
+                    `photo_path`,
+                    `is_deleted`,
+                    `is_public`,
+                    `title`,
+                    `description`,
+                    `alt`
+                  ) VALUES (
+                    '',
+                    '{$iObjectID}',
+                    '{$filePath}',
+                    '0',
+                    '1',
+                    '{$fileInfo['title']}',
+                    '{$fileInfo['description']}',
+                    '{$fileInfo['alt']}'
+                  )";
+
+            $wpdb->query($q);
+
+			return $wpdb->insert_id;
 		}
 		public function deletePhoto($sPhotoID) {
 			global $wpdb;

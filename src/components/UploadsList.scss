@@ -1,18 +1,33 @@
 .in-gallery__files-to-upload {
+  margin-top: 15px;
+  padding: 15px 0;
+}
 
+.in-gallery__notification {
+  padding: 5px 15px;
+  &.success {
+    background-color: green;
+    color: white;
+  }
+  &.error {
+    background-color: darkred;
+    color: white;
+  }
+  &.info {
+    background-color: #fafafa;
+    color: dodgerblue;
+  }
 }
 
 .in-gallery__file-to-upload {
-  border-radius: 2px;
-  background-color: #ffffff;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
-  padding: 5px;
-  margin-bottom: 15px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 3px solid #fafafa;
   &:last-child {
     margin-bottom: 0;
   }
   &.isUploading {
-    opacity:0.25;
+    opacity: 0.25;
     border-right: 5px solid #ccc;
   }
   &.isUploaded {
@@ -25,7 +40,28 @@
 
 .in-gallery__file-summary {
   margin-left: 10px;
-  h2, p {
+  blockquote {
     margin: 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-bottom: 3px solid #fafafa;
+  }
+}
+
+.in-gallery__form {
+
+}
+
+.in-gallery__form-input {
+
+  label {
+    display: block;
+  }
+  input, textarea {
+    display: block;
+    width: 100%;
+  }
+  textarea {
+    height: 4rem;
   }
 }

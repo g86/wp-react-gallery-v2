@@ -17,6 +17,12 @@ html, body {
   font-family: 'Open Sans', Verdana, sans-serif;
   font-size: 12px;
 }
+#mountIncludeGallery {
+  @include foundation-forms;
+  // @include foundation-typography;
+  @import '../../components/UploadsList';
+  @import '../../components/UploadPhotos';
+}
 
 .in-gallery {
 
@@ -25,7 +31,7 @@ html, body {
 
 .in-gallery_photo {
   display: inline-block;
-  box-shadow: 0 0 2px rgba(0,0,0,0.33);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.33);
   background-color: #fff;
   margin: 5px;
   padding: 5px;
@@ -46,4 +52,14 @@ html, body {
 
 .in-gallery_photo-link {
   display: block;
+}
+
+#uploadified_metabox_photos_R {
+  .button-link {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  .ui-sortable-handle {
+    background-color: #23282d;
+    color: #fff;
+  }
 }

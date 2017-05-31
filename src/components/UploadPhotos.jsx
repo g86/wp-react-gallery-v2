@@ -38,6 +38,9 @@ class UploadPhotos extends Component {
     data.append('fileSize', fileToBeUploaded.size)
     data.append('referenceID', activePostId)
     data.append('file', fileToBeUploaded)
+    data.append('displayName', fileToBeUploaded.displayName)
+    data.append('description', fileToBeUploaded.description)
+    data.append('alt', fileToBeUploaded.alt)
 
     this.updateFileStatus(fileToBeUploaded, 'uploading')
 
@@ -105,15 +108,18 @@ class UploadPhotos extends Component {
 
   createQueue = (files) => {
     this.setState({
-      files: this.addUploadStatuses(files)
+      files: this.addUploadStatusesAndAttributes(files)
     })
   }
 
-  addUploadStatuses = (files) => {
+  addUploadStatusesAndAttributes = (files) => {
     return files.map(file => {
       file.isUploading = false
       file.isUploaded = false
       file.error = false
+      file.displayName = ''
+      file.description = ''
+      file.alt = ''
       return file
     })
   }
@@ -131,17 +137,30 @@ class UploadPhotos extends Component {
     this.setState({files: []})
   }
 
+  updateFileInfo = (fileIndex, fieldName, fieldValue) => {
+    const {files} = this.state
+    const updatedFiles = files.map((file, index) => {
+      if (fileIndex === index) {
+        file[fieldName] = fieldValue
+        console.log(`Updating File Info | ${fieldName}=${fieldValue}`)
+      }
+      return file
+    })
+    this.setState({files: updatedFiles})
+  }
+
   render() {
     const {files} = this.state
+    const gotFiles = files.length > 0 ? true : false
     return (
       <div>
         <form name="gallery-upload" ref="uploadForm">
-          <input type="file" name="galleryFiles[]" multiple="multiple" ref="galleryFiles"
-                 onChange={this.onSelectionChange.bind(this)}/>
-          <button onClick={this.resetUpload}>Reset</button>
-          <button type="submit" onClick={this.startUploading}>Process files</button>
+          {!gotFiles && <input type="file" name="galleryFiles[]" multiple="multiple" ref="galleryFiles"
+                 onChange={this.onSelectionChange.bind(this)}/>}
+          {gotFiles && <button className="in-gallery__button cancel" onClick={this.resetUpload}>Reset</button>}
+          {gotFiles && <button className="in-gallery__button proceed" type="submit" onClick={this.startUploading}>Process files</button>}
         </form>
-        <UploadsList files={files}/>
+        <UploadsList files={files} onChange={this.updateFileInfo}/>
       </div>
     )
   }

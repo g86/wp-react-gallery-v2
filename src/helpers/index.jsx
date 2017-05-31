@@ -26,7 +26,7 @@ export const formatPhotosObject = (photos) => {
       "isPanorama": true,
       "isWallpaper": false,
       "isCover": photo.is_header,
-      "alt": photo.title,
+      "alt": photo.alt,
       "title": photo.title,
       "description": photo.description,
       "rating": "",
