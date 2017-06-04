@@ -27,6 +27,7 @@ export const formatPhotosObject = (photos) => {
       "isWallpaper": false,
       "isCover": photo.is_header,
       "alt": photo.alt,
+      "geo": photo.geo,
       "title": photo.title,
       "description": photo.description,
       "rating": "",

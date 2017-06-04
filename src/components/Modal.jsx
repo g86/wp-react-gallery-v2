@@ -22,8 +22,9 @@ class Modal extends Component {
     console.log("set new height")
     const imageStyle = {
       display: 'block',
-      height: ReactDOM.findDOMNode(this.refs.modalContainer).clientHeight - 200 || 'auto', // some kind of weird hack..
-      width: 'auto'
+      height: 'auto', // some kind of weird hack..
+      width: '100%', // some kind of weird hack..
+      maxWidth: ReactDOM.findDOMNode(this.refs.modalContainer).clientWidth - 100
     }
     this.setState({imageStyle: imageStyle})
   }

@@ -44,7 +44,7 @@ class UploadPhotos extends Component {
 
     this.updateFileStatus(fileToBeUploaded, 'uploading')
 
-    let config = {
+    let config = { // multipart/form-data
       headers: ['application/form-data-encoded'] // used to enable file uploads
     }
 
@@ -155,7 +155,7 @@ class UploadPhotos extends Component {
     return (
       <div>
         <form name="gallery-upload" ref="uploadForm">
-          {!gotFiles && <input type="file" name="galleryFiles[]" multiple="multiple" ref="galleryFiles"
+          {!gotFiles && <input type="file" name="galleryFiles[]" multiple accept="image/*,.jpg,.gif,.png,.jpeg" ref="galleryFiles"
                  onChange={this.onSelectionChange.bind(this)}/>}
           {gotFiles && <button className="in-gallery__button cancel" onClick={this.resetUpload}>Reset</button>}
           {gotFiles && <button className="in-gallery__button proceed" type="submit" onClick={this.startUploading}>Process files</button>}

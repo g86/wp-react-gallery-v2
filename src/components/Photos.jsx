@@ -4,10 +4,15 @@ import Photo from './Photo.jsx'
 class Photos extends Component {
 
   renderPhotos(photos) {
-    const { onClick } = this.props
+    const { onClick, onDelete, onSave } = this.props
     return photos.map((photo, index)=> {
       return (
-        <Photo photo={photo} key={index} index={index} onClick={onClick} />
+        <Photo photo={photo}
+               key={`${index}_photo`}
+               index={index}
+               onClick={onClick}
+               onDelete={onDelete}
+               onSave={onSave} />
       )
     })
   }

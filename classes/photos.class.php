@@ -38,6 +38,8 @@
 				$fileTypes  = 'jpg|gif|png|jpeg';
 				$typesArray = explode('|',$fileTypes);
 				$fileParts  = pathinfo($_FILES['file']['name']);
+
+                $fileInfo['geo'] = $this->getGpsData($tempFile);
 				
 				if (in_array(strtolower($fileParts['extension']),$typesArray)) {
 					// Uncomment the following line if you want to make the directory if it doesn't exist
@@ -63,6 +65,35 @@
 			}
 			return $responseData;
 		}
+		private function getGpsData($filename) {
+            $exif = exif_read_data($filename);
+            $lon = $this->getGps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
+            $lat = $this->getGps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
+            return $lat . ',' . $lon;
+        }
+        private function getGps($exifCoord, $hemi) {
+
+            $degrees = count($exifCoord) > 0 ? $this->gps2Num($exifCoord[0]) : 0;
+            $minutes = count($exifCoord) > 1 ? $this->gps2Num($exifCoord[1]) : 0;
+            $seconds = count($exifCoord) > 2 ? $this->gps2Num($exifCoord[2]) : 0;
+
+            $flip = ($hemi == 'W' or $hemi == 'S') ? -1 : 1;
+
+            return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
+
+        }
+        private function gps2Num($coordPart) {
+
+            $parts = explode('/', $coordPart);
+
+            if (count($parts) <= 0)
+                return 0;
+
+            if (count($parts) == 1)
+                return $parts[0];
+
+            return floatval($parts[0]) / floatval($parts[1]);
+        }
 		public function savePhotoData($iObjectID,$filePath,$fileInfo) {
 			global $wpdb;
 
@@ -74,7 +105,8 @@
                     `is_public`,
                     `title`,
                     `description`,
-                    `alt`
+                    `alt`,
+                    `geo`
                   ) VALUES (
                     '',
                     '{$iObjectID}',
@@ -83,7 +115,8 @@
                     '1',
                     '{$fileInfo['title']}',
                     '{$fileInfo['description']}',
-                    '{$fileInfo['alt']}'
+                    '{$fileInfo['alt']}',
+                    '{$fileInfo['geo']}'
                   )";
 
             $wpdb->query($q);
@@ -99,8 +132,21 @@
 			global $wpdb;
 			$wpdb->query("UPDATE uploadified_photos SET is_deleted = 1 WHERE object_id = '{$this->ID}'");
 		}
-		public function updatePhotoInfo($aData) {
+		public function updatePhotoInfo($photoID, $photoInfo) {
 			global $wpdb;
+            $q = "UPDATE uploadified_photos SET 
+              `title` = '{$photoInfo['title']}',
+              `description` = '{$photoInfo['description']}',
+              `alt` = '{$photoInfo['alt']}',
+              `geo` = '{$photoInfo['geo']}'
+              WHERE `id` = '{$photoID}'";
+            $wpdb->query($q);
+
+            return array(
+                'message' => 'hm',
+                'query' => $q,
+                'db_response' => $wpdb->last_error
+            );
 		}
 		public function resizeSavedPhoto($sourceFile,$targetFile,$sWatermark = false) {
 			$sourceAbsoluteFile = str_replace('//','/',$_SERVER['DOCUMENT_ROOT'] . '/' . $sourceFile);
