@@ -91,8 +91,27 @@ class App extends Component {
   deletePhotoByIndex = (index) => {
     console.log("Delete by index: " + index)
     const {photos} = this.state
+    const deleteId = photos[index].id
     photos.splice(index, 1)
     this.setState({photos: photos})
+
+    let data = new FormData()
+    data.append('photoID', deleteId)
+
+    let config = { // multipart/form-data
+      headers: ['application/form-data-encoded'] // used to enable file uploads
+    }
+
+    const deleteUrl = window.deleteUrl || 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=delete'
+
+    return Axios.post(deleteUrl, data, config)
+      .then(function (res) {
+        console.log("Api response: ", res)
+      })
+      .catch(function (err) {
+        console.error(err)
+      })
+
   }
 
   saveUpdatedInfo = (index, info) => {

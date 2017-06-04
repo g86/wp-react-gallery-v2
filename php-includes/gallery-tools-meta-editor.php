@@ -2,6 +2,7 @@
     window.activePostId = <?php echo intval($_GET['galleryID']); ?>;
     window.uploadUrl = '<?php echo '/wp-content/plugins/include-gallery/api.php?action=upload'; ?>';
     window.updateUrl = '<?php echo '/wp-content/plugins/include-gallery/api.php?action=update'; ?>';
+    window.deleteUrl = '<?php echo '/wp-content/plugins/include-gallery/api.php?action=delete'; ?>';
     window.photosUrl = '<?php echo '/wp-content/plugins/include-gallery/api.php?action=photos&referenceID=' . intval($_GET['galleryID']); ?>';
 </script>
 

@@ -75,7 +75,6 @@ function endpoint_photos()
 
 function endpoint_delete()
 {
-    $objectID = intval($_POST['referenceID'], 10);
     $photoID = intval($_POST['photoID'], 10);
     $responseData = array();
 
@@ -86,7 +85,7 @@ function endpoint_delete()
         $responseData['userInfo'] = 'User has right capabilities. All OK.';
     }
 
-    if ($objectID > 0 && $photoID > 0) {
+    if ($photoID > 0) {
         $oUploadifiedPhotosR = new UploadifiedPhotosR($objectID);
         $responseData = $oUploadifiedPhotosR->deletePhoto($photoID);
     } else {

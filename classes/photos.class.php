@@ -125,8 +125,14 @@
 		}
 		public function deletePhoto($sPhotoID) {
 			global $wpdb;
-			$wpdb->query("UPDATE uploadified_photos SET is_deleted = 1 WHERE id = '{$sPhotoID}'");
-            $responseData['allPhotos'] = $this->getPhotos();
+            $q = "UPDATE uploadified_photos SET is_deleted = 1 WHERE id = '{$sPhotoID}'";
+			$wpdb->query($q);
+            return array(
+                'allPhotos' => $this->getPhotos(),
+                'message' => 'ok',
+                'query' => $q,
+                'db_response' => $wpdb->last_error
+            );
 		}
 		public function deletePhotos() {
 			global $wpdb;
@@ -143,7 +149,7 @@
             $wpdb->query($q);
 
             return array(
-                'message' => 'hm',
+                'message' => 'ok',
                 'query' => $q,
                 'db_response' => $wpdb->last_error
             );

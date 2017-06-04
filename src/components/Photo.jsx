@@ -47,6 +47,14 @@ class Photo extends Component {
     this.resetState()
   }
 
+  onDelete = (index, event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (confirm('Are you sure?')) {
+      this.props.onDelete(index)
+    }
+  }
+
   resetState = () => {
     this.setState({
       isEditing: false,
@@ -56,7 +64,7 @@ class Photo extends Component {
   }
 
   render() {
-    const {photo, index, onClick, onDelete, onSave} = this.props
+    const {photo, index, onClick, onDelete} = this.props
     const {isEditing, modifiedPhoto} = this.state
     const photoHasGeo = ( photo.geo !== '0,0' && photo.geo !== '' )
     const isDisabled = false
@@ -125,7 +133,7 @@ class Photo extends Component {
               </div>
               <div className="in-gallery_photo-controls">
                 <button className="in-gallery__button proceed" onClick={this.editPhoto.bind(this, index, photo)}>Edit</button>
-                <button className="in-gallery__button delete" onClick={onDelete.bind(this, index)}>Delete</button>
+                <button className="in-gallery__button delete" onClick={this.onDelete.bind(this, index)}>Delete</button>
               </div>
             </div>
             }
