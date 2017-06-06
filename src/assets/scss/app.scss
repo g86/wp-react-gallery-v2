@@ -1,13 +1,13 @@
 @import '~foundation-sites/scss/foundation';
 // @import '~foundation-sites/scss/grid/grid';
 
-@include foundation-global-styles;
-@include foundation-flex-grid;
+// @include foundation-global-styles;
+
 // @include foundation-forms;
 // @include foundation-typography;
 
 @import "vars";
-@import "modal";
+@import "flexModal";
 
 html, body {
   height: 100%;
@@ -18,8 +18,11 @@ html, body {
   font-size: 12px;
 }
 #mountIncludeGallery {
-  @include foundation-forms;
+
   // @include foundation-typography;
+  @include foundation-flex-grid;
+  @include foundation-forms;
+
   @import '../../components/UploadsList';
   @import '../../components/UploadPhotos';
   @import '../../components/Photo';
@@ -28,7 +31,7 @@ html, body {
 
 .in-gallery {
   background-color: #f5f5f5;
-  padding: 30px 15px;
+  padding: 15px 10px;
 }
 
 
@@ -39,5 +42,9 @@ html, body {
   .ui-sortable-handle {
     background-color: #23282d;
     color: #fff;
+  }
+  > .inside {
+    padding: 0 !important;
+    margin: 0 !important;
   }
 }

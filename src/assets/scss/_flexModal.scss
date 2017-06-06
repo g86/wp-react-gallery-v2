@@ -1,0 +1,99 @@
+/* ===================== flex modal ======================= */
+
+/* master placeholder */
+.in-flexModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  box-sizing: border-box;
+}
+
+/* overlay dimmer */
+.in-flexModalOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* box itself */
+.in-flexModalBox {
+  background-color: #fff;
+  margin: 15px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  border-radius: 2px;
+  position: relative;
+  user-select: none;
+}
+
+/* image */
+.in-flexImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* modal buttons */
+.in-flexModalNavArrow {
+  cursor: pointer;
+  user-select: none;
+  top: 50%;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition-duration: 0.3s;
+  padding: 15px;
+  width: 25px;
+  height: 25px;
+  transform: translate(0, -25px);
+  border-radius: 50px;
+  color: #000;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  > i {
+    font-size: 25px;
+    color: #000;
+  }
+}
+
+.in-flexModalNavArrowLeft {
+  left: 15px;
+}
+
+.in-flexModalNavArrowRight {
+  right: 15px;
+}
+
+.in-flexModalNavClose {
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  color: #000;
+  > i {
+    color: #000;
+    text-shadow: rgba(255,255,255,0.5);
+  }
+}
+
+.in-flexModalImageTitle {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+
+  width: auto;
+  transform: translate(-50%, 50px);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 5px 35px 55px;
+  border-radius: 50px;
+}

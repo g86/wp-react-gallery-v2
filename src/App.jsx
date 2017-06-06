@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import './assets/scss/app.scss'
 import Photos from './components/Photos'
-import Modal from './components/Modal'
+import FlexModal from './components/FlexModal'
 import UploadPhotos from './components/UploadPhotos'
 import Axios from 'axios'
 import {formatPhotosObject} from './helpers/index'
@@ -44,7 +44,6 @@ class App extends Component {
   onNavigation(action, event) {
     event.preventDefault()
     event.stopPropagation()
-    console.log("onNavigation(arguments): ", arguments)
 
     const {activeIndex, photos} = this.state
 
@@ -55,6 +54,11 @@ class App extends Component {
             activePhoto: photos[activeIndex - 1],
             activeIndex: activeIndex - 1
           })
+        } else {
+          this.setState({
+            activePhoto: photos[photos.length -1],
+            activeIndex: photos.length -1
+          })
         }
         break
       case "next":
@@ -62,6 +66,11 @@ class App extends Component {
           this.setState({
             activePhoto: photos[activeIndex + 1],
             activeIndex: activeIndex + 1
+          })
+        } else {
+          this.setState({
+            activePhoto: photos[0],
+            activeIndex: 0
           })
         }
         break
@@ -156,7 +165,10 @@ class App extends Component {
                 onDelete={this.deletePhotoByIndex.bind(this)}
                 onSave={this.saveUpdatedInfo.bind(this)}/>
         {activePhoto &&
-        <Modal photo={activePhoto} onClose={this.closeModal.bind(this)} onNavigation={this.onNavigation.bind(this)}/>}
+        <FlexModal photo={activePhoto}
+                   onClose={this.closeModal.bind(this)}
+                   onNavigation={this.onNavigation.bind(this)}/>}
+
       </div>
     )
   }

@@ -22,7 +22,7 @@ class Photo extends Component {
     this.setState({isEditing: true, modifiedPhoto: photo, modifiedPhotoIndex: photoIndex})
   }
 
-  cancelEdit = (event) => {
+  cancelEdit = (index, event) => {
     event.preventDefault()
     event.stopPropagation()
     this.setState({
@@ -87,37 +87,32 @@ class Photo extends Component {
                     <input type="text"
                            name="title"
                            value={modifiedPhoto.title}
-                           disabled={isDisabled}
                            onChange={this.onChange.bind(this)}/>
                   </div>
                   <div className="in-gallery__form-input">
                     <label>Photo description:</label>
                     <textArea value={modifiedPhoto.description}
                               name="description"
-                              onChange={this.onChange.bind(this)}
-                              disabled={isDisabled}></textArea>
+                              onChange={this.onChange.bind(this)}></textArea>
                   </div>
                   <div className="in-gallery__form-input">
                     <label>Photo alternative text:</label>
                     <input type="text"
                            name="alt"
                            value={modifiedPhoto.alt}
-                           onChange={this.onChange.bind(this)}
-                           disabled={isDisabled}/>
+                           onChange={this.onChange.bind(this)}/>
                   </div>
                   <div className="in-gallery__form-input">
                     <label>GEO coordinates:</label>
                     <input type="text"
                            name="geo"
                            value={modifiedPhoto.geo}
-                           onChange={this.onChange.bind(this)}
-                           disabled={isDisabled}/>
+                           onChange={this.onChange.bind(this)}/>
                   </div>
-
-                  <div className="in-gallery_photo-controls">
-                    <button className="in-gallery__button cancel" onClick={this.cancelEdit.bind(this, index)}>Cancel</button>
-                    <button className="in-gallery__button proceed" onClick={this.onSave.bind(this, index, modifiedPhoto)}>Save</button>
-                  </div>
+                </div>
+                <div className="in-gallery_photo-controls">
+                  <button className="in-gallery__button cancel" onClick={this.cancelEdit.bind(this, index)}>Cancel</button>
+                  <button className="in-gallery__button proceed" onClick={this.onSave.bind(this, index, modifiedPhoto)}>Save</button>
                 </div>
               </div>
             </div> : <div className="in-gallery_info-column">

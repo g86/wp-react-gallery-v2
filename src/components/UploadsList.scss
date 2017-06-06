@@ -1,27 +1,11 @@
 .in-gallery__files-to-upload {
-  margin-top: 15px;
-  padding: 15px 0;
-}
-
-.in-gallery__notification {
-  padding: 5px 15px;
-  &.success {
-    background-color: green;
-    color: white;
-  }
-  &.error {
-    background-color: darkred;
-    color: white;
-  }
-  &.info {
-    background-color: #fafafa;
-    color: dodgerblue;
-  }
+  margin-top: 10px;
+  padding: 10px 0;
 }
 
 .in-gallery__file-to-upload {
-  margin-top: 15px;
-  padding-top: 15px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 3px solid #fafafa;
   &:last-child {
     margin-bottom: 0;
