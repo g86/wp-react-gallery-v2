@@ -96,4 +96,8 @@
   color: #fff;
   padding: 5px 35px 55px;
   border-radius: 50px;
+  white-space: nowrap;
+  @media all and (max-width: 400px) {
+    white-space: normal;
+  }
 }

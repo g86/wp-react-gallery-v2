@@ -91,9 +91,9 @@ class FlexModal extends Component {
     const {onClose, photo, onNavigation} = this.props
     const {imageStyle} = this.state
     return (
-      <div className="in-flexModal" ref="flexModal" onClick={onClose.bind(this)}>
-        <div className="in-flexModalOverlay" onClick={this.stopPropagation.bind(this)}>
-          <div className="in-flexModalBox">
+      <div className="in-flexModal" ref="flexModal">
+        <div className="in-flexModalOverlay" onClick={onClose.bind(this)}>
+          <div className="in-flexModalBox" onClick={this.stopPropagation.bind(this)}>
             <a className="in-flexModalNavClose" onClick={onClose.bind(this)}><i className="material-icons">close</i></a>
             <a className="in-flexModalNavArrow in-flexModalNavArrowLeft"
                onClick={onNavigation.bind(this, 'prev')}><i className="material-icons">keyboard_arrow_left</i>
