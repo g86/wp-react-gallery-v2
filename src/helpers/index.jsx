@@ -11,8 +11,21 @@ export const fileSizeFromBytes = (sizeInBytes, toUnits = 'mb') => {
   return size
 }
 
+export const isJSON = (str) => {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 export const formatPhotosObject = (photos) => {
   return photos.map(photo => {
+    let exifData = photo.exif
+    if (isJSON(photo.exif)){
+      exifData = JSON.parse(photo.exif)
+    }
     return {
       "id": photo.id,
       "galleryId": photo.object_id,
@@ -28,6 +41,7 @@ export const formatPhotosObject = (photos) => {
       "isCover": photo.is_header,
       "alt": photo.alt,
       "geo": photo.geo,
+      "exif": exifData,
       "title": photo.title,
       "description": photo.description,
       "rating": "",

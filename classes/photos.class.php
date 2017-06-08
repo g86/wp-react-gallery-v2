@@ -39,8 +39,11 @@
 				$typesArray = explode('|',$fileTypes);
 				$fileParts  = pathinfo($_FILES['file']['name']);
 
+                $EXIF = $this->getExifData($tempFile);
+
                 $fileInfo['geo'] = $this->getGpsData($tempFile);
-				
+                $fileInfo['exif'] = json_encode($EXIF);
+
 				if (in_array(strtolower($fileParts['extension']),$typesArray)) {
 					// Uncomment the following line if you want to make the directory if it doesn't exist
 					// mkdir(str_replace('//','/',$targetPath), 0755, true);
@@ -50,7 +53,7 @@
 					$sRelativeOriginalPath = str_replace($_SERVER['DOCUMENT_ROOT'],'',$targetFile);
 					//$sWatermarkedCopyPath = preg_replace('|nt-originals|Uis','nt-photos',$sourceFile);
 					
-					$this->resizeSavedPhoto($sRelativeOriginalPath,$sRelativeOriginalPath,$sWatermark);
+					$this->resizeSavedPhoto($sRelativeOriginalPath,$sRelativeOriginalPath,$sWatermark,$EXIF);
 					$iNewPhotoID = $this->savePhotoData($iObjectID,$sRelativeOriginalPath,$fileInfo);
                     $responseData['uploadedPhoto'] = $this->getNewPhotoData($iNewPhotoID );
                     $responseData['allPhotos'] = $this->getPhotos();
@@ -66,10 +69,19 @@
 			return $responseData;
 		}
 		private function getGpsData($filename) {
-            $exif = exif_read_data($filename);
+            $exif = @exif_read_data($filename);
             $lon = $this->getGps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
             $lat = $this->getGps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
             return $lat . ',' . $lon;
+        }
+        private function getExifData($filename) {
+            $exif = @exif_read_data($filename, 0, true);
+            if (isset($exif['COMPUTED'])) {
+                if (isset($exif['COMPUTED']['html'])) {
+                    unset($exif['COMPUTED']['html']);
+                }
+            }
+            return $exif;
         }
         private function getGps($exifCoord, $hemi) {
 
@@ -106,7 +118,8 @@
                     `title`,
                     `description`,
                     `alt`,
-                    `geo`
+                    `geo`,
+                    `exif`
                   ) VALUES (
                     '',
                     '{$iObjectID}',
@@ -116,7 +129,8 @@
                     '{$fileInfo['title']}',
                     '{$fileInfo['description']}',
                     '{$fileInfo['alt']}',
-                    '{$fileInfo['geo']}'
+                    '{$fileInfo['geo']}',
+                    '{$fileInfo['exif']}'
                   )";
 
             $wpdb->query($q);
@@ -154,16 +168,34 @@
                 'db_response' => $wpdb->last_error
             );
 		}
-		public function resizeSavedPhoto($sourceFile,$targetFile,$sWatermark = false) {
+		public function resizeSavedPhoto($sourceFile,$targetFile,$sWatermark = false, $EXIF = array()) {
 			$sourceAbsoluteFile = str_replace('//','/',$_SERVER['DOCUMENT_ROOT'] . '/' . $sourceFile);
 			$targetAbsoluteFile = str_replace('//','/',$_SERVER['DOCUMENT_ROOT'] . '/' . $targetFile);
 
+            $degrees = 0;
+            if (isset($EXIF['IFD0']['Orientation'])) {
+                // landscape == 1
+                if ($EXIF['IFD0']['Orientation'] == 6) {
+                    // rotate 90* CW
+                    $degrees = -90;
+                }
+                if ($EXIF['IFD0']['Orientation'] == 8) {
+                    // rotate 90* CW
+                    $degrees = 90;
+                }
+            }
 			// maxw 960?
 			$newHeight = 960;
 			// maxh 720?
 			list($origWidth, $origHeight, $origType) = getimagesize($sourceAbsoluteFile);
 			$imageType = image_type_to_mime_type($origType);
-			
+
+            if ($degrees !== 0) {
+                $tmpWidth = $origWidth;
+                $origWidth = $origHeight;
+                $origHeight = $tmpWidth;
+            }
+
 			if ($newHeight < $origHeight) {
 				$scale = $newHeight / $origHeight;
 				//echo 'Scaling ratio: ' . $scale;
@@ -192,7 +224,12 @@
 				default:
 					break;
 			}
+            if ($degrees !== 0) {
+                $sourceImage = imagerotate($sourceImage, $degrees, 0);
+            }
 			imagecopyresampled($newImage,$sourceImage,0,0,0,0,$newWidth,$newHeight,$origWidth,$origHeight);
+            imagedestroy($sourceImage); // free memory
+
 			if ($sWatermark) {
 				// compose watermark
 				list($WaterMarkWidth,$WaterMarkHeight) = getimagesize($sWatermark);

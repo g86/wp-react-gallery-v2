@@ -69,6 +69,8 @@ class Photo extends Component {
     const photoHasGeo = ( photo.geo !== '0,0' && photo.geo !== '' )
     const isDisabled = false
 
+    console.log(photo.exif)
+
     return (
       <div className="in-gallery_photo" key={`${index}_${photo.id}`}>
         <div className="row collapse">
