@@ -4,7 +4,11 @@ import Photos from './components/Photos'
 import FlexModal from './components/FlexModal'
 import UploadPhotos from './components/UploadPhotos'
 import Axios from 'axios'
-import {formatPhotosObject} from './helpers/index'
+import {
+  formatPhotosObject,
+  TEST_DELETE_URL,
+  TEST_UPDATE_URL
+} from './helpers/index'
 import galleryStub from '../sample-data/gallery.json'
 
 class App extends Component {
@@ -108,7 +112,7 @@ class App extends Component {
       headers: ['application/form-data-encoded'] // used to enable file uploads
     }
 
-    const deleteUrl = window.deleteUrl || 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=delete'
+    const deleteUrl = window.deleteUrl || TEST_DELETE_URL
 
     return Axios.post(deleteUrl, data, config)
       .then(function (res) {
@@ -130,7 +134,7 @@ class App extends Component {
 
     this.setState({photos: photos})
 
-    const saveUrl = window.updateUrl || 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=update'
+    const saveUrl = window.updateUrl || TEST_UPDATE_URL
     let data = new FormData()
     data.append('photoID', photos[index].id)
     data.append('title', photos[index].title)

@@ -183,7 +183,7 @@ class UploadPhotos extends Component {
           {!gotFiles && !isUploading &&
           <div className="in-gallery__upload-browse-files">
             <label htmlFor="selectFilesBtn" className="in-gallery__upload-browse-button">
-              Select Photos...
+              Add Photos...
               <input type="file"
                      id="selectFilesBtn"
                      name="galleryFiles[]"
@@ -197,7 +197,7 @@ class UploadPhotos extends Component {
             <button className="in-gallery__button cancel" onClick={this.resetUpload}>Reset</button>
             <button className="in-gallery__button proceed"
                     onClick={this.startUploading}
-                    type="submit">Process files
+                    type="submit">Upload Photos
             </button>
           </div>}
 
@@ -208,7 +208,7 @@ class UploadPhotos extends Component {
             <button className="in-gallery__button cancel" onClick={this.resetUpload}>Reset</button>
             <button className="in-gallery__button proceed"
                     onClick={this.startUploading}
-                    type="submit">Process files
+                    type="submit">Upload Photos
             </button>
           </div>}
         </form>

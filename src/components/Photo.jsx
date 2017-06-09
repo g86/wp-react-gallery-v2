@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 
+
 class Photo extends Component {
   state = {
     isEditing: false,
