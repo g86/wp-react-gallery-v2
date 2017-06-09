@@ -6,30 +6,20 @@
 .in-gallery__file-to-upload {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 3px solid #fafafa;
+  border-top: 1px solid #666;
+  &:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
   &:last-child {
     margin-bottom: 0;
-  }
-  &.isUploading {
-    opacity: 0.25;
-    border-right: 5px solid #ccc;
-  }
-  &.isUploaded {
-    border-right: 5px solid forestgreen;
-  }
-  &.hasError {
-    border-right: 5px solid darkred;
+    padding-bottom: 0;
   }
 }
 
 .in-gallery__file-summary {
   margin-left: 10px;
-  blockquote {
-    margin: 0;
-    padding: 10px 15px;
-    font-size: 13px;
-    border-bottom: 3px solid #fafafa;
-  }
 }
 
 .in-gallery__form {
@@ -37,7 +27,6 @@
 }
 
 .in-gallery__form-input {
-
   label {
     display: block;
   }

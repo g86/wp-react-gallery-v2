@@ -1,7 +1,14 @@
 import React, {Component} from 'react'
 import UploadsList from './UploadsList'
 import Axios from 'axios'
-import {formatPhotosObject} from '../helpers/index'
+import {
+  countFilesToBeUploaded,
+  countSizeUploaded,
+  countSizeToBeUploaded,
+  formatPhotosObject,
+  fileSizeFromBytes,
+  TEST_UPLOAD_URL
+} from '../helpers'
 
 class UploadPhotos extends Component {
 
@@ -9,7 +16,13 @@ class UploadPhotos extends Component {
     super(props)
     this.state = {
       files: [],
-      isUploading: false
+      isUploading: false,
+      uploadTimeStart: 0,
+      uploadTime: 0,
+      uploadSize: 0,
+      uploadSizeUploaded: 0,
+      uploadSizeTotal: 0,
+      uploadSpeed: 0
     }
   }
 
@@ -31,7 +44,7 @@ class UploadPhotos extends Component {
 
   uploadSingleFile = (fileToBeUploaded) => {
     const {activePostId} = window
-    const uploadUrl = window.uploadUrl || 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=upload'
+    const uploadUrl = window.uploadUrl || TEST_UPLOAD_URL
     let data = new FormData()
     data.append('fileName', fileToBeUploaded.name)
     data.append('fileType', fileToBeUploaded.type)
@@ -52,7 +65,7 @@ class UploadPhotos extends Component {
 
     return Axios.post(uploadUrl, data, config)
       .then(function (res) {
-        console.log("Api response: ", res)
+        console.log("Uploaded, response: ", res)
         self.props.onUpload(formatPhotosObject(res.data.allPhotos))
         self.updateFileStatus(fileToBeUploaded, 'uploaded')
         self.uploadNextFile()
@@ -65,7 +78,7 @@ class UploadPhotos extends Component {
   }
 
   updateFileStatus = (fileToBeUploaded, toStatus = 'uploading') => {
-    let {files} = this.state
+    let {files, uploadTimeStart} = this.state
     const updatedFiles = files.map(file => {
       if (file.name === fileToBeUploaded.name) {
         file.isUploading = toStatus === 'uploading' ? true : false
@@ -74,18 +87,15 @@ class UploadPhotos extends Component {
       }
       return file
     })
-    this.setState({files: updatedFiles})
-  }
+    const newTime = +new Date()
+    const sizeUploaded = countSizeUploaded(files)
 
-  countFilesToBeUploaded = () => {
-    const {files} = this.state
-    return files.reduce((uploadsPending, file) => {
-      if (file.isUploaded === false && file.error === false) {
-        return ++uploadsPending
-      } else {
-        return uploadsPending
-      }
-    }, 0)
+    this.setState({
+      files: updatedFiles,
+      uploadTime: newTime,
+      uploadSizeUploaded: sizeUploaded,
+      uploadSpeed: parseFloat(sizeUploaded / ((newTime - uploadTimeStart) / 1000)).toFixed(2)
+    })
   }
 
   getNextUploadFile = () => {
@@ -97,9 +107,8 @@ class UploadPhotos extends Component {
 
   uploadNextFile = () => {
     const file = this.getNextUploadFile()
-    console.log('Files to upload: ', this.countFilesToBeUploaded())
-    if (this.countFilesToBeUploaded() > 0 && file) {
-      console.log('Uploading next file: ', file.name)
+    if (countFilesToBeUploaded(this.state.files) > 0 && file) {
+      console.log('Uploading file: ', file.name)
       this.uploadSingleFile(file)
     } else {
       this.setState({isUploading: false, files: []})
@@ -126,7 +135,12 @@ class UploadPhotos extends Component {
 
   startUploading = (event) => {
     event.preventDefault()
-    this.setState({isUploading: true})
+    this.setState({
+      isUploading: true,
+      uploadTimeStart: +new Date(),
+      uploadSizeTotal: countSizeToBeUploaded(this.state.files),
+      uploadSizeUploaded: 0
+    })
     this.uploadNextFile()
   }
 
@@ -142,7 +156,6 @@ class UploadPhotos extends Component {
     const updatedFiles = files.map((file, index) => {
       if (fileIndex === index) {
         file[fieldName] = fieldValue
-        console.log(`Updating File Info | ${fieldName}=${fieldValue}`)
       }
       return file
     })
@@ -150,17 +163,56 @@ class UploadPhotos extends Component {
   }
 
   render() {
-    const {files} = this.state
+    const {files, isUploading, uploadSpeed} = this.state
     const gotFiles = files.length > 0 ? true : false
+    const sizeToUpload = countSizeToBeUploaded(files)
+    const sizeUploaded = countSizeUploaded(files)
+    const progress = sizeToUpload > 0 ? parseFloat((sizeUploaded / sizeToUpload) * 100).toFixed(2) : 0
     return (
       <div>
         <form name="gallery-upload" ref="uploadForm">
-          {!gotFiles && <input type="file" name="galleryFiles[]" multiple accept="image/*,.jpg,.gif,.png,.jpeg" ref="galleryFiles"
-                 onChange={this.onSelectionChange.bind(this)}/>}
-          {gotFiles && <button className="in-gallery__button cancel" onClick={this.resetUpload}>Reset</button>}
-          {gotFiles && <button className="in-gallery__button proceed" type="submit" onClick={this.startUploading}>Process files</button>}
+          {isUploading && <div>
+            <p>Uploaded: {fileSizeFromBytes(sizeUploaded)}Mb/{fileSizeFromBytes(sizeToUpload)}Mb</p>
+            <div className="in-gallery__upload-progress">
+              <div className="in-gallery__upload-progress-bar" style={{width: `${progress}%`}}></div>
+            </div>
+            <p>Speed: {fileSizeFromBytes(uploadSpeed)}Mb/s</p>
+            <p>&nbsp;</p>
+          </div>}
+
+          {!gotFiles && !isUploading &&
+          <div className="in-gallery__upload-browse-files">
+            <label htmlFor="selectFilesBtn" className="in-gallery__upload-browse-button">
+              Select Photos...
+              <input type="file"
+                     id="selectFilesBtn"
+                     name="galleryFiles[]"
+                     multiple accept="image/*,.jpg,.png,.jpeg" ref="galleryFiles"
+                     onChange={this.onSelectionChange.bind(this)}/>
+            </label>
+          </div>}
+
+          {gotFiles && !isUploading &&
+          <div className="in-gallery__upload-controls">
+            <button className="in-gallery__button cancel" onClick={this.resetUpload}>Reset</button>
+            <button className="in-gallery__button proceed"
+                    onClick={this.startUploading}
+                    type="submit">Process files
+            </button>
+          </div>}
+
+          {!isUploading && <UploadsList files={files} onChange={this.updateFileInfo}/>}
+
+          {gotFiles && !isUploading &&
+          <div className="in-gallery__upload-controls">
+            <button className="in-gallery__button cancel" onClick={this.resetUpload}>Reset</button>
+            <button className="in-gallery__button proceed"
+                    onClick={this.startUploading}
+                    type="submit">Process files
+            </button>
+          </div>}
         </form>
-        <UploadsList files={files} onChange={this.updateFileInfo}/>
+        <hr />
       </div>
     )
   }

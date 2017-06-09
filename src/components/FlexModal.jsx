@@ -11,8 +11,6 @@ class FlexModal extends Component {
   }
 
   setImageHeight() {
-    console.log("Recalculate image sizing model")
-
     const cW = ReactDOM.findDOMNode(this.refs.flexModal).clientWidth
     const cH = ReactDOM.findDOMNode(this.refs.flexModal).clientHeight
 
@@ -22,13 +20,14 @@ class FlexModal extends Component {
     const mRatio = cW / cH
     const iRatio = iW / iH
 
+    /*
     console.log(`mRatio: ${parseFloat(mRatio).toFixed(2)} iRatio: ${parseFloat(iRatio).toFixed(2)}`)
     console.log(`iW: ${iW} iH: ${iH}`)
     console.log(`cW: ${cW} cH: ${cH}`)
     console.log("client aspect ratio: ", cW / cH > 1 ? 'landscape' : 'portrait')
     console.log("image aspect ratio: ", iW / iH > 1 ? 'landscape' : 'portrait')
-
     console.log(mRatio > iRatio ? 'limit height' : 'limit width')
+    */
 
     const imageStyles = {
       limitWidth: {

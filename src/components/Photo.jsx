@@ -17,8 +17,6 @@ class Photo extends Component {
   editPhoto = (photoIndex, photo, event) => {
     event.preventDefault()
     event.stopPropagation()
-    // this.props.onEdit(photoIndex);
-    console.log("I want to edit " + photoIndex)
     this.setState({isEditing: true, modifiedPhoto: photo, modifiedPhotoIndex: photoIndex})
   }
 
@@ -35,7 +33,7 @@ class Photo extends Component {
   onChange = (event) => {
     event.preventDefault()
     event.stopPropagation()
-    const { modifiedPhoto } = this.state
+    const {modifiedPhoto} = this.state
     modifiedPhoto[event.target.name] = event.target.value
     this.setState(modifiedPhoto)
   }
@@ -65,11 +63,12 @@ class Photo extends Component {
 
   render() {
     const {photo, index, onClick, onDelete} = this.props
-    const {isEditing, modifiedPhoto} = this.state
+    const {isEditing, modifiedPhoto, draggablePhotoStyle} = this.state
     const photoHasGeo = ( photo.geo !== '0,0' && photo.geo !== '' )
-    const isDisabled = false
 
-    console.log(photo.exif)
+    if (photo.exif) {
+      console.log(photo.exif)
+    }
 
     return (
       <div className="in-gallery_photo" key={`${index}_${photo.id}`}>

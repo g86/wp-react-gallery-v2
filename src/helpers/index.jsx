@@ -1,3 +1,5 @@
+export const TEST_UPLOAD_URL = 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=upload'
+
 export const fileSizeFromBytes = (sizeInBytes, toUnits = 'mb') => {
   let size = 0
   switch (toUnits) {
@@ -55,4 +57,32 @@ export const formatPhotosObject = (photos) => {
       "focalLength": ""
     }
   })
+}
+
+export const countFilesToBeUploaded = (files) => {
+  return files.reduce((uploadsPending, file) => {
+    if (file.isUploaded === false && file.error === false) {
+      return ++uploadsPending
+    } else {
+      return uploadsPending
+    }
+  }, 0)
+}
+
+export const countSizeToBeUploaded = (files) => {
+  return files.reduce((uploadsPending, file) => {
+    uploadsPending += file.size
+    return  uploadsPending
+  }, 0)
+}
+
+export const countSizeUploaded = (files) => {
+  return files.reduce((uploadsPending, file) => {
+    if (file.isUploaded === false && file.error === false) {
+      return  uploadsPending
+    } else {
+      uploadsPending = uploadsPending + file.size
+      return  uploadsPending
+    }
+  }, 0)
 }

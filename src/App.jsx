@@ -29,11 +29,10 @@ class App extends Component {
 
   preloadPhotos = () => {
     const {photosUrl} = window
-    console.log('Preloading photos? ', photosUrl)
     let self = this
     return Axios.get(photosUrl)
       .then(function (res) {
-        console.log("Api response: ", res)
+        console.log("Photos loaded")
         self.setState({photos: formatPhotosObject(res.data.allPhotos)})
       })
       .catch(function (err) {
@@ -90,7 +89,6 @@ class App extends Component {
     event.stopPropagation()
 
     this.setState({activePhoto: this.state.photos[index], activeIndex: index})
-    console.log("openModal with arguments: ", arguments)
   }
 
   refreshPhotos = (newPhotos) => {
@@ -98,7 +96,6 @@ class App extends Component {
   }
 
   deletePhotoByIndex = (index) => {
-    console.log("Delete by index: " + index)
     const {photos} = this.state
     const deleteId = photos[index].id
     photos.splice(index, 1)
@@ -115,7 +112,7 @@ class App extends Component {
 
     return Axios.post(deleteUrl, data, config)
       .then(function (res) {
-        console.log("Api response: ", res)
+        console.log("Deleted")
       })
       .catch(function (err) {
         console.error(err)
@@ -126,7 +123,6 @@ class App extends Component {
   saveUpdatedInfo = (index, info) => {
     event.preventDefault()
     event.stopPropagation()
-    console.log("Save by index: " + index, info)
     const {activePostId} = window
     const {photos} = this.state
 
@@ -148,7 +144,7 @@ class App extends Component {
 
     return Axios.post(saveUrl, data, config)
       .then(function (res) {
-        console.log("Api response: ", res)
+        console.log("Saved")
       })
       .catch(function (err) {
         console.error(err)
