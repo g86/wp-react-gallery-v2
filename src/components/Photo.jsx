@@ -72,6 +72,9 @@ class Photo extends Component {
       console.log(photo.exif)
     }
 
+    const setDeleteIcon = () => { return {__html: deleteIcon}}
+    const setUndoIcon = () => { return {__html: undoIcon}}
+
     return (
       <div className="in-gallery_photo" key={`${index}_${photo.id}`}>
         <div className="row collapse">
@@ -115,7 +118,7 @@ class Photo extends Component {
                 </div>
                 <div className="in-gallery_photo-controls">
                   <a className="in-gallery__button-link cancel" onClick={this.cancelEdit.bind(this, index)}>
-                    <img src={undoIcon} alt="undo-icon" />
+                    <i dangerouslySetInnerHTML={setUndoIcon()}></i>
                     Cancel</a>
                   <button className="in-gallery__button proceed" onClick={this.onSave.bind(this, index, modifiedPhoto)}>Save</button>
                 </div>
@@ -132,7 +135,7 @@ class Photo extends Component {
                 </div>
                 <div className="in-gallery_photo-controls">
                   <a className="in-gallery__button-link delete" onClick={this.onDelete.bind(this, index)}>
-                    <img src={deleteIcon} alt="delete-icon" />
+                    <i dangerouslySetInnerHTML={setDeleteIcon()}></i>
                     Delete</a>
                   <button className="in-gallery__button proceed" onClick={this.editPhoto.bind(this, index, photo)}>Edit</button>
                 </div>

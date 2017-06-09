@@ -79,7 +79,7 @@
   display: inline-block;
   margin-right: 12px;
   font-size: 14px;
-  > img {
+  > i > svg {
     height: 17px;
     width: auto;
     position: relative;
@@ -88,7 +88,7 @@
   }
   &.delete, &.cancel {
     color: #666;
-    > img {
+    > i {
       opacity: 0.5;
     }
   }
