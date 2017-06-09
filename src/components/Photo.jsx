@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-
+import deleteIcon from '../assets/icons/ic_delete_black_24px.svg'
+import undoIcon from '../assets/icons/ic_undo_black_24px.svg'
 
 class Photo extends Component {
   state = {
@@ -74,12 +75,12 @@ class Photo extends Component {
     return (
       <div className="in-gallery_photo" key={`${index}_${photo.id}`}>
         <div className="row collapse">
-          <div className="column small-6 medium-5 large-4 in-gallery_photo-column">
+          <div className="column small-12 medium-5 in-gallery_photo-column">
             <a className="in-gallery_photo-link" onClick={onClick.bind(this, photo.id, index)}>
               <img className="in-gallery_photo-img" src={photo.photoThumbnail} alt={photo.alt}/>
             </a>
           </div>
-          <div className="column small-6 medium-7 large-8">
+          <div className="column small-12 medium-7">
             {isEditing ? <div className="in-gallery_info-column">
               <div className="in-gallery_photo-info">
                 <div className="in-gallery_photo-title">Editing: {photo.title}</div>
@@ -113,7 +114,9 @@ class Photo extends Component {
                   </div>
                 </div>
                 <div className="in-gallery_photo-controls">
-                  <button className="in-gallery__button cancel" onClick={this.cancelEdit.bind(this, index)}>Cancel</button>
+                  <a className="in-gallery__button-link cancel" onClick={this.cancelEdit.bind(this, index)}>
+                    <img src={undoIcon} alt="undo-icon" />
+                    Cancel</a>
                   <button className="in-gallery__button proceed" onClick={this.onSave.bind(this, index, modifiedPhoto)}>Save</button>
                 </div>
               </div>
@@ -127,11 +130,14 @@ class Photo extends Component {
                 <div className="in-gallery_photo-gps">
                   <span className="in-gallery_caption">GEO:</span> {photoHasGeo && this.renderGoogleMaps(photo.geo)}
                 </div>
+                <div className="in-gallery_photo-controls">
+                  <a className="in-gallery__button-link delete" onClick={this.onDelete.bind(this, index)}>
+                    <img src={deleteIcon} alt="delete-icon" />
+                    Delete</a>
+                  <button className="in-gallery__button proceed" onClick={this.editPhoto.bind(this, index, photo)}>Edit</button>
+                </div>
               </div>
-              <div className="in-gallery_photo-controls">
-                <button className="in-gallery__button proceed" onClick={this.editPhoto.bind(this, index, photo)}>Edit</button>
-                <button className="in-gallery__button delete" onClick={this.onDelete.bind(this, index)}>Delete</button>
-              </div>
+
             </div>
             }
           </div>

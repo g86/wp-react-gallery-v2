@@ -211,8 +211,8 @@ class UploadPhotos extends Component {
                     type="submit">Upload Photos
             </button>
           </div>}
+          <p>&nbsp;</p>
         </form>
-        <hr />
       </div>
     )
   }
