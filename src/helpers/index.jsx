@@ -1,6 +1,8 @@
-export const TEST_UPLOAD_URL = 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=upload'
-export const TEST_DELETE_URL = 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=delete'
-export const TEST_UPDATE_URL = 'http://www.impressions.lt/wp-content/plugins/include-gallery/api.php?action=update'
+
+const TEST_HOST = window.IN_GALLERY_TEST_HOST || 'http://localhost'
+export const TEST_UPLOAD_URL = `${TEST_HOST}/wp-content/plugins/include-gallery/api.php?action=upload`
+export const TEST_DELETE_URL = `${TEST_HOST}/wp-content/plugins/include-gallery/api.php?action=delete`
+export const TEST_UPDATE_URL = `${TEST_HOST}/wp-content/plugins/include-gallery/api.php?action=update`
 
 export const fileSizeFromBytes = (sizeInBytes, toUnits = 'mb') => {
   let size = 0

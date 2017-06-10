@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Include Gallery [REACT]
+Plugin Name: Include Gallery
 Plugin URI: http://www.include.lt
-Description: Gallery per single post. Multi upload capability with uploadify script.
-Version: 1.0
-Author: Gediminas Gn
+Description: Gallery per single post. Multi upload capability straight from your mobile device.
+Version: 2.0
+Author: Gediminas Ginkevicius
 Tags: 
 Author URI: http://www.include.lt
-License: Inquire.
+License: UNLICENSED
 */
 
 add_action('admin_init', 'include_gallery_init_R');
