@@ -10,11 +10,9 @@ class UploadsList extends Component {
 
   renderFilesList(files) {
     return files.map((file, index) => {
-      const isDisabled = file.isUploading ? 'disabled' : '';
-
       return (
         <div key={index} className="in-gallery__file-to-upload">
-          {!file.isUploaded && <div className="row collapse">
+          <div className="row collapse">
             <div className="columns small-12 medium-7">
               {file.preview && <img src={file.preview} alt={file.name} style={{width: '100%', height: 'auto'}}/>}
             </div>
@@ -27,29 +25,26 @@ class UploadsList extends Component {
                            name="displayName"
                            placeholder={file.name}
                            value={file.displayName}
-                           disabled={isDisabled}
                            onChange={this.onChange.bind(this, index)}/>
                   </div>
                   <div className="in-gallery__form-input">
                     <label>Photo description:</label>
                     <textArea value={file.description}
                               name="description"
-                              onChange={this.onChange.bind(this, index)}
-                              disabled={isDisabled}></textArea>
+                              onChange={this.onChange.bind(this, index)}></textArea>
                   </div>
                   <div className="in-gallery__form-input">
                     <label>Photo alternative text:</label>
                     <input type="text"
                            name="alt"
                            value={file.alt}
-                           onChange={this.onChange.bind(this, index)}
-                           disabled={isDisabled}/>
+                           onChange={this.onChange.bind(this, index)}/>
                   </div>
                 </div>
                 <div>Picture size: <strong>{fileSizeFromBytes(file.size)}Mb</strong></div>
               </div>
             </div>
-          </div>}
+          </div>
         </div>
       )
     })

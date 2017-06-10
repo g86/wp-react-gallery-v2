@@ -217,9 +217,15 @@ class UploadifiedPhotosR
         $degrees = 90;
       }
     }
-    // maxw 960?
-    $newHeight = 1080;
-    // maxh 720?
+
+    $imgSizes = array(
+      'small'=> 460,
+      'medium'=> 720,
+      'large'=> 1080
+    );
+
+    $newHeight = $imgSizes['large'];
+
     list($origWidth, $origHeight, $origType) = getimagesize($sourceAbsoluteFile);
     $imageType = image_type_to_mime_type($origType);
 

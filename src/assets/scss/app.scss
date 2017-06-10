@@ -47,4 +47,13 @@ html, body {
     padding: 0 !important;
     margin: 0 !important;
   }
+  .in-gallery__footer {
+    text-align: center;
+    padding: 8px 0;
+    background-color: #c3c5c9;
+    > a {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
 }

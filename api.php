@@ -115,7 +115,7 @@ function endpoint_update()
   }
 
   if ($photoID > 0) {
-    $oUploadifiedPhotosR = new UploadifiedPhotosR($objectID);
+    $oUploadifiedPhotosR = new UploadifiedPhotosR($photoID);
     $responseData = $oUploadifiedPhotosR->updatePhotoInfo($photoID, $photoInfo);
   } else {
     $responseData['error'] = 'Reference ID is missing.';
