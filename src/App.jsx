@@ -9,7 +9,7 @@ import {
   TEST_DELETE_URL,
   TEST_UPDATE_URL
 } from './helpers/index'
-import galleryStub from '../sample-data/gallery.json'
+// import galleryStub from '../sample-data/gallery.json'
 
 class App extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class App extends Component {
   componentWillMount() {
     const {activePostId} = window
     console.log("Gallery ID: ", activePostId || "Not specified")
-    this.setState({photos: galleryStub.results})
+    // this.setState({photos: galleryStub.results})
   }
 
   componentDidMount() {
