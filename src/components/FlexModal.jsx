@@ -20,15 +20,6 @@ class FlexModal extends Component {
     const mRatio = cW / cH
     const iRatio = iW / iH
 
-    /*
-    console.log(`mRatio: ${parseFloat(mRatio).toFixed(2)} iRatio: ${parseFloat(iRatio).toFixed(2)}`)
-    console.log(`iW: ${iW} iH: ${iH}`)
-    console.log(`cW: ${cW} cH: ${cH}`)
-    console.log("client aspect ratio: ", cW / cH > 1 ? 'landscape' : 'portrait')
-    console.log("image aspect ratio: ", iW / iH > 1 ? 'landscape' : 'portrait')
-    console.log(mRatio > iRatio ? 'limit height' : 'limit width')
-    */
-
     const imageStyles = {
       limitWidth: {
         maxWidth: cW,
@@ -67,9 +58,10 @@ class FlexModal extends Component {
   }
 
   handleKeyDown(event) {
-    const {onClose, onNavigation} = this.props
+    const {onClose, onNavigation, onDelete} = this.props
     event.preventDefault = () => {}
     event.stopPropagation = () => {}
+    console.log('event.code', event.code)
     switch (event.code) {
       case "ArrowRight":
         onNavigation('next', event)
@@ -79,6 +71,10 @@ class FlexModal extends Component {
         break
       case "Escape":
         onClose(event)
+        break
+      case "Delete":
+      case "Backspace":
+        onDelete(event)
         break
       // delete with del and edit feature with f2
       default:

@@ -36,7 +36,6 @@ class App extends Component {
     let self = this
     return Axios.get(photosUrl)
       .then(function (res) {
-        console.log("Photos loaded")
         self.setState({photos: formatPhotosObject(res.data.allPhotos)})
       })
       .catch(function (err) {
@@ -99,11 +98,35 @@ class App extends Component {
     this.setState({photos: newPhotos, activePhoto: null, activeIndex: -1})
   }
 
+  deleteViaModal = (event) => {
+    const {activeIndex, photos} = this.state
+    this.deletePhotoByIndex(activeIndex)
+
+  }
+
   deletePhotoByIndex = (index) => {
-    const {photos} = this.state
+    const {photos, activeIndex, activePhoto} = this.state
     const deleteId = photos[index].id
     photos.splice(index, 1)
-    this.setState({photos: photos})
+
+      if (activePhoto) {
+        if (photos.length >= 1 && photos[index]) {
+            this.setState({
+                activePhoto: photos[index],
+                photos
+            })
+        } else if (photos.length >= 1 && !photos[index]) {
+            this.setState({
+                activePhoto: photos[index - 1],
+                activeIndex: index - 1,
+                photos
+            })
+        } else {
+            this.setState({activePhoto: null, activeIndex: -1, photos})
+        }
+      } else {
+          this.setState({photos: photos})
+      }
 
     let data = new FormData()
     data.append('photoID', deleteId)
@@ -117,6 +140,7 @@ class App extends Component {
     return Axios.post(deleteUrl, data, config)
       .then(function (res) {
         console.log("Deleted")
+
       })
       .catch(function (err) {
         console.error(err)
@@ -166,6 +190,7 @@ class App extends Component {
                 onSave={this.saveUpdatedInfo.bind(this)}/>
         {activePhoto &&
         <FlexModal photo={activePhoto}
+                   onDelete={this.deleteViaModal.bind(this)}
                    onClose={this.closeModal.bind(this)}
                    onNavigation={this.onNavigation.bind(this)}/>}
 
