@@ -34,11 +34,11 @@ function include_gallery_admin_scripts_R()
   global $oUploadifiedR;
   $oUploadifiedR = new UploadifiedR;
 
-  $htmlFile = file_get_contents(dirname(__FILE__) . '/build/index.html');
+  $htmlFile = file_get_contents(dirname(__FILE__) . '/index.html');
   $jsFileName = '';
   if (preg_match('|src=\"/static/js/(main\.[0-9a-z]+\.js)\"|Uis', $htmlFile, $res)) {
     $jsFileName = $res[1];
-    wp_register_script('uploadified_admin_js_general_R', plugins_url("build/static/js/{$jsFileName}", __FILE__));
+    wp_register_script('uploadified_admin_js_general_R', plugins_url("static/js/{$jsFileName}", __FILE__));
     wp_enqueue_script('uploadified_admin_js_general_R');
     wp_register_style('uploadified_admin_css_icons_R', 'https://fonts.googleapis.com/icon?family=Material+Icons');
     wp_enqueue_style('uploadified_admin_css_icons_R');
