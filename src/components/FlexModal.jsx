@@ -70,6 +70,7 @@ class FlexModal extends Component {
         onNavigation('prev', event)
         break
       case "Escape":
+      case "Enter":
         onClose(event)
         break
       case "Delete":

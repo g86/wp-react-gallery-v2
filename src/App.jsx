@@ -100,8 +100,9 @@ class App extends Component {
 
   deleteViaModal = (event) => {
     const {activeIndex, photos} = this.state
-    this.deletePhotoByIndex(activeIndex)
-
+    if (confirm(`Delete Photo #${activeIndex}?`)) {
+      this.deletePhotoByIndex(activeIndex)
+    }
   }
 
   deletePhotoByIndex = (index) => {
