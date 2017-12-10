@@ -86,32 +86,32 @@ class Photo extends Component {
           <div className="column small-12 medium-7">
             {isEditing ? <div className="in-gallery_info-column">
               <div className="in-gallery_photo-info">
-                <div className="in-gallery_photo-title">Editing: {photo.title}</div>
+                {/*<div className="in-gallery_photo-title">Editing: {photo.title}</div>*/}
                 <div className="in-gallery__form">
                   <div className="in-gallery__form-input">
-                    <label>Photo display name:</label>
                     <input type="text"
                            name="title"
+                           placeholder="Photo title"
                            value={modifiedPhoto.title}
                            onChange={this.onChange.bind(this)}/>
                   </div>
                   <div className="in-gallery__form-input">
-                    <label>Photo description:</label>
                     <textArea value={modifiedPhoto.description}
                               name="description"
+                              placeholder="Description"
                               onChange={this.onChange.bind(this)}></textArea>
                   </div>
                   <div className="in-gallery__form-input">
-                    <label>Photo alternative text:</label>
                     <input type="text"
                            name="alt"
+                           placeholder="ALT text"
                            value={modifiedPhoto.alt}
                            onChange={this.onChange.bind(this)}/>
                   </div>
                   <div className="in-gallery__form-input">
-                    <label>GEO coordinates:</label>
                     <input type="text"
                            name="geo"
+                           placeholder="GEO coordinates"
                            value={modifiedPhoto.geo}
                            onChange={this.onChange.bind(this)}/>
                   </div>

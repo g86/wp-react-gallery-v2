@@ -77,7 +77,6 @@ class FlexModal extends Component {
       case "Backspace":
         onDelete(event)
         break
-      // delete with del and edit feature with f2
       default:
         break
     }
