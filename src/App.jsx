@@ -9,7 +9,7 @@ import {
   TEST_DELETE_URL,
   TEST_UPDATE_URL
 } from './helpers/index'
-// import galleryStub from '../sample-data/gallery.json'
+import galleryMock from '../sample-data/gallery.json'
 
 class App extends Component {
   constructor(props) {
@@ -23,8 +23,11 @@ class App extends Component {
 
   componentWillMount() {
     const {activePostId} = window
-    console.log("Gallery ID: ", activePostId || "Not specified")
-    // this.setState({photos: galleryStub.results})
+    console.log("Gallery ID: ", activePostId || "No Gallery ID available")
+
+    if (!activePostId) {
+      this.setState({photos: galleryMock.results})
+    }
   }
 
   componentDidMount() {
@@ -36,7 +39,6 @@ class App extends Component {
     let self = this
     return Axios.get(photosUrl)
       .then(function (res) {
-        console.log("Photos loaded")
         self.setState({photos: formatPhotosObject(res.data.allPhotos)})
       })
       .catch(function (err) {
@@ -85,6 +87,7 @@ class App extends Component {
   closeModal(event) {
     event.preventDefault()
     event.stopPropagation()
+
     this.setState({activePhoto: null, activeIndex: -1})
   }
 
@@ -99,17 +102,42 @@ class App extends Component {
     this.setState({photos: newPhotos, activePhoto: null, activeIndex: -1})
   }
 
+  deleteViaModal = (event) => {
+    const {activeIndex, photos} = this.state
+    if (confirm(`Delete Photo #${activeIndex}?`)) {
+      this.deletePhotoByIndex(activeIndex)
+    }
+  }
+
   deletePhotoByIndex = (index) => {
-    const {photos} = this.state
+    const {photos, activePhoto} = this.state
     const deleteId = photos[index].id
     photos.splice(index, 1)
-    this.setState({photos: photos})
+
+      if (activePhoto) {
+        if (photos.length >= 1 && photos[index]) {
+            this.setState({
+                activePhoto: photos[index],
+                photos
+            })
+        } else if (photos.length >= 1 && !photos[index]) {
+            this.setState({
+                activePhoto: photos[index - 1],
+                activeIndex: index - 1,
+                photos
+            })
+        } else {
+            this.setState({activePhoto: null, activeIndex: -1, photos})
+        }
+      } else {
+          this.setState({photos: photos})
+      }
 
     let data = new FormData()
     data.append('photoID', deleteId)
 
     let config = { // multipart/form-data
-      headers: ['application/form-data-encoded'] // used to enable file uploads
+      headers: ['application/form-data-encoded']
     }
 
     const deleteUrl = window.deleteUrl || TEST_DELETE_URL
@@ -117,6 +145,7 @@ class App extends Component {
     return Axios.post(deleteUrl, data, config)
       .then(function (res) {
         console.log("Deleted")
+
       })
       .catch(function (err) {
         console.error(err)
@@ -127,33 +156,36 @@ class App extends Component {
   saveUpdatedInfo = (index, info) => {
     event.preventDefault()
     event.stopPropagation()
+
     const {activePostId} = window
     const {photos} = this.state
 
-    photos[index] = Object.assign(photos[index], info)
+    photos[index] = {
+      ...photos[index],
+      ...info
+    }
 
     this.setState({photos: photos})
 
     const saveUrl = window.updateUrl || TEST_UPDATE_URL
-    let data = new FormData()
-    data.append('photoID', photos[index].id)
-    data.append('title', photos[index].title)
-    data.append('description', photos[index].description)
-    data.append('alt', photos[index].alt)
-    data.append('geo', photos[index].geo)
+    let formData = new FormData()
+    formData.append('photoID', photos[index].id)
+    formData.append('title', photos[index].title || '')
+    formData.append('description', photos[index].description || '')
+    formData.append('alt', photos[index].alt || '')
+    formData.append('geo', photos[index].geo || '')
 
-    let config = { // multipart/form-data
+    const config = { // multipart/form-data
       headers: ['application/form-data-encoded'] // used to enable file uploads
     }
 
-    return Axios.post(saveUrl, data, config)
+    return Axios.post(saveUrl, formData, config)
       .then(function (res) {
         console.log("Saved")
       })
       .catch(function (err) {
         console.error(err)
       })
-    
   }
 
   render() {
@@ -166,6 +198,7 @@ class App extends Component {
                 onSave={this.saveUpdatedInfo.bind(this)}/>
         {activePhoto &&
         <FlexModal photo={activePhoto}
+                   onDelete={this.deleteViaModal.bind(this)}
                    onClose={this.closeModal.bind(this)}
                    onNavigation={this.onNavigation.bind(this)}/>}
 
