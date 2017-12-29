@@ -5,7 +5,7 @@ class UploadifiedPhotosR
   public function __construct($ID)
   {
     $this->ID = $ID;
-    $this->defaultPhotoPath = '/photo-content/no-photo.jpg';
+    $this->defaultPhotoPath = '/galleries/no-photo.jpg';
   }
 
   public function getPhotos()
@@ -40,7 +40,7 @@ class UploadifiedPhotosR
       //$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
 
       $absPathWatermark = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/plugins/uploadified-gallery/watermarks/impressions-watermark.png';
-      $absTargetDir = $_SERVER['DOCUMENT_ROOT'] . '/photo-content/' . $iObjectID . '/';
+      $absTargetDir = $_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $iObjectID . '/';
       $absTargetDir = str_replace('//', '/', $absTargetDir);
 
       $this->createTargetDir($absTargetDir);

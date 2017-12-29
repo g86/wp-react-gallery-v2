@@ -71,8 +71,8 @@ class UploadifiedR
     global $wpdb;
     $sizeMiB = $this->deleteGalleryPhotos($iGalleryID);
     $wpdb->query("DELETE FROM uploadified_galleries WHERE `id` = '{$iGalleryID}'");
-    if (is_dir($_SERVER['DOCUMENT_ROOT'] . '/photo-content/' . $iGalleryID . '')) {
-      rmdir($_SERVER['DOCUMENT_ROOT'] . '/photo-content/' . $iGalleryID . '');
+    if (is_dir($_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $iGalleryID . '')) {
+      rmdir($_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $iGalleryID . '');
     }
     //echo "size(MB): " . $sizeMiB."<br />";
   }
