@@ -76,6 +76,9 @@ class UploadifiedPhotosR
         //$sWatermarkedCopyPath = preg_replace('|nt-originals|Uis','nt-photos',$sourceFile);
 
         $aNewDimensions = $this->resizeSavedPhoto($sRelativeOriginalPath, $sRelativeOriginalPath, $absPathWatermark, $EXIF);
+        $fileInfo['is_deleted'] = '0';
+        $fileInfo['is_public'] = '1';
+        $fileInfo['isCover'] = '0';
         $fileInfo['width'] = $aNewDimensions['width'];
         $fileInfo['height'] = $aNewDimensions['height'];
         $fileInfo['ratio'] = intval($aNewDimensions['width'], 10) / intval($aNewDimensions['height'], 10);
@@ -191,9 +194,9 @@ class UploadifiedPhotosR
                     '{$fileInfo['width']}',
                     '{$fileInfo['height']}',
                     '{$fileInfo['ratio']}',
-                    '0',
-                    '1',
-                    '0',
+                    '{$fileInfo['is_deleted']}',
+                    '{$fileInfo['is_public']}',
+                    '{$fileInfo['isCover']}',
                     '{$fileInfo['title']}',
                     '{$fileInfo['description']}',
                     '{$fileInfo['alt']}',
