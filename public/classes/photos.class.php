@@ -25,11 +25,14 @@ class UploadifiedPhotosR
     }
     return $aIDs;
   }
-  private function createTargetDir($absTargetDir) {
+
+  private function createTargetDir($absTargetDir)
+  {
     if (!is_dir($absTargetDir)) {
       mkdir($absTargetDir, 0755, true);
     }
   }
+
   public function uploadPhoto($iObjectID, $fileInfo)
   {
     ini_set('memory_limit', '512M');
@@ -39,7 +42,7 @@ class UploadifiedPhotosR
 
       //$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
 
-      $absPathWatermark = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/plugins/uploadified-gallery/watermarks/impressions-watermark.png';
+      $absPathWatermark = false;
       $absTargetDir = $_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $iObjectID . '/';
       $absTargetDir = str_replace('//', '/', $absTargetDir);
 
@@ -57,7 +60,9 @@ class UploadifiedPhotosR
       $EXIF = $this->getExifData($tempUploadedFile);
 
       $fileInfo['geo'] = $this->getGpsData($tempUploadedFile);
+
       $fileInfo['exif'] = json_encode($EXIF);
+      $fileInfo = array_merge($fileInfo, getPhotoParams($EXIF));
 
       if (in_array(strtolower($fileExtension), $typesArray)) {
         // Uncomment the following line if you want to make the directory if it doesn't exist
@@ -68,7 +73,9 @@ class UploadifiedPhotosR
         $sRelativeOriginalPath = str_replace($_SERVER['DOCUMENT_ROOT'], '', $absTargetFile);
         //$sWatermarkedCopyPath = preg_replace('|nt-originals|Uis','nt-photos',$sourceFile);
 
-        $this->resizeSavedPhoto($sRelativeOriginalPath, $sRelativeOriginalPath, $absPathWatermark, $EXIF);
+        $aNewDimensions = $this->resizeSavedPhoto($sRelativeOriginalPath, $sRelativeOriginalPath, $absPathWatermark, $EXIF);
+        $fileInfo['width'] = $aNewDimensions['width'];
+        $fileInfo['height'] = $aNewDimensions['height'];
         $iNewPhotoID = $this->savePhotoData($iObjectID, $sRelativeOriginalPath, $fileInfo);
         $responseData['uploadedPhoto'] = $this->getNewPhotoData($iNewPhotoID);
         $responseData['allPhotos'] = $this->getPhotos();
@@ -82,6 +89,22 @@ class UploadifiedPhotosR
       $responseData['status'] = 'FAILED';
     }
     return $responseData;
+  }
+
+  private function getPhotoParams($EXIF)
+  {
+    $someData = array(
+      'exifAuthor' => '',
+      'exifTimeCreated' => isset($EXIF['EXIF']['DateTimeOriginal']) ? $EXIF['EXIF']['DateTimeOriginal'] : '',
+      'exifCameraMake' => isset($EXIF['IFD0']['Make']) ? $EXIF['IFD0']['Make'] : '',
+      'exifCameraModel' => isset($EXIF['IFD0']['Model']) ? $EXIF['IFD0']['Model'] : '',
+      'exifIso' => isset($EXIF['EXIF']['ISOSpeedRatings']) ? $EXIF['EXIF']['ISOSpeedRatings'] : '',
+      'exifShutter' => isset($EXIF['EXIF']['ExposureTime']) ? $EXIF['EXIF']['ExposureTime'] : '',
+      'exifAperture' => isset($EXIF['EXIF']['FNumber']) ? $EXIF['EXIF']['FNumber'] : '',
+      'exifFocalLength' => isset($EXIF['EXIF']['FocalLengthIn35mmFilm']) ? $EXIF['EXIF']['FocalLengthIn35mmFilm'] : ''
+    );
+
+    return $someData;
   }
 
   private function getGpsData($filename)
@@ -138,24 +161,50 @@ class UploadifiedPhotosR
                     `id`,
                     `object_id`,
                     `photo_path`,
+                    `width`,
+                    `height`,
+                    `ratio`,
                     `is_deleted`,
                     `is_public`,
+                    `is_cover`,
                     `title`,
                     `description`,
                     `alt`,
                     `geo`,
-                    `exif`
+                    `exifGeo`,
+                    `exif`,
+                    `exifAuthor`,
+                    `exifTimeCreated`,
+                    `exifCameraMake`,
+                    `exifCameraModel`,
+                    `exifIso`,
+                    `exifShutter`,
+                    `exifAperture`,
+                    `exifFocalLength`,
                   ) VALUES (
                     '',
                     '{$iObjectID}',
                     '{$filePath}',
+                    '{$fileInfo['width']}',
+                    '{$fileInfo['height']}',
+                    '{$fileInfo['ratio']}',
                     '0',
                     '1',
+                    '{$fileInfo['is_cover']}',
                     '{$fileInfo['title']}',
                     '{$fileInfo['description']}',
                     '{$fileInfo['alt']}',
                     '{$fileInfo['geo']}',
-                    '{$fileInfo['exif']}'
+                    '{$fileInfo['geo']}',
+                    '{$fileInfo['exif']}',
+                    '{$fileInfo['exifAuthor']}',
+                    '{$fileInfo['exifTimeCreated']}',
+                    '{$fileInfo['exifCameraMake']}',
+                    '{$fileInfo['exifCameraModel']}',
+                    '{$fileInfo['exifIso']}',
+                    '{$fileInfo['exifShutter']}',
+                    '{$fileInfo['exifAperture']}',
+                    '{$fileInfo['exifFocalLength']}'
                   )";
 
     $wpdb->query($q);
@@ -190,6 +239,7 @@ class UploadifiedPhotosR
               `description` = '{$photoInfo['description']}',
               `alt` = '{$photoInfo['alt']}',
               `geo` = '{$photoInfo['geo']}'
+              `is_cover` = '{$photoInfo['is_cover']}'
               WHERE `id` = '{$photoID}'";
     $wpdb->query($q);
 
@@ -219,12 +269,13 @@ class UploadifiedPhotosR
     }
 
     $imgSizes = array(
-      'small'=> 460,
-      'medium'=> 720,
-      'large'=> 1080
+      'small' => 460,
+      'medium' => 720,
+      'large' => 1080,
+      'full' => 1440,
     );
 
-    $newHeight = $imgSizes['large'];
+    $newHeight = $imgSizes['full'];
 
     list($origWidth, $origHeight, $origType) = getimagesize($sourceAbsoluteFile);
     $imageType = image_type_to_mime_type($origType);
@@ -294,6 +345,10 @@ class UploadifiedPhotosR
         break;
     }
     chmod($targetAbsoluteFile, 0777);
+
+    $storedDimensions = array('width' => $newWidth, 'height' => $newHeight);
+
+    return $storedDimensions;
   }
 
   public function getPhoto($sPhotoID)
