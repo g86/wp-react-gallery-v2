@@ -11,6 +11,8 @@ class UploadifiedPhotosR
   public function getPhotos()
   {
     global $wpdb;
+    // select only fields to display...
+    // create separate endpoint for admin, or query by role
     $aPhotos = $wpdb->get_results("SELECT * FROM uploadified_photos WHERE object_id = '{$this->ID}' AND is_deleted = '0' ORDER BY `num` ASC, `id` ASC", ARRAY_A);
     return $aPhotos;
   }
@@ -62,7 +64,7 @@ class UploadifiedPhotosR
       $fileInfo['geo'] = $this->getGpsData($tempUploadedFile);
 
       $fileInfo['exif'] = json_encode($EXIF);
-      $fileInfo = array_merge($fileInfo, getPhotoParams($EXIF));
+      $fileInfo = array_merge($fileInfo, $this->getPhotoParams($EXIF));
 
       if (in_array(strtolower($fileExtension), $typesArray)) {
         // Uncomment the following line if you want to make the directory if it doesn't exist
@@ -76,6 +78,7 @@ class UploadifiedPhotosR
         $aNewDimensions = $this->resizeSavedPhoto($sRelativeOriginalPath, $sRelativeOriginalPath, $absPathWatermark, $EXIF);
         $fileInfo['width'] = $aNewDimensions['width'];
         $fileInfo['height'] = $aNewDimensions['height'];
+        $fileInfo['ratio'] = intval($aNewDimensions['width'], 10) / intval($aNewDimensions['height'], 10);
         $iNewPhotoID = $this->savePhotoData($iObjectID, $sRelativeOriginalPath, $fileInfo);
         $responseData['uploadedPhoto'] = $this->getNewPhotoData($iNewPhotoID);
         $responseData['allPhotos'] = $this->getPhotos();
@@ -166,7 +169,7 @@ class UploadifiedPhotosR
                     `ratio`,
                     `is_deleted`,
                     `is_public`,
-                    `is_cover`,
+                    `isCover`,
                     `title`,
                     `description`,
                     `alt`,
@@ -190,7 +193,7 @@ class UploadifiedPhotosR
                     '{$fileInfo['ratio']}',
                     '0',
                     '1',
-                    '{$fileInfo['is_cover']}',
+                    '0',
                     '{$fileInfo['title']}',
                     '{$fileInfo['description']}',
                     '{$fileInfo['alt']}',
@@ -239,7 +242,7 @@ class UploadifiedPhotosR
               `description` = '{$photoInfo['description']}',
               `alt` = '{$photoInfo['alt']}',
               `geo` = '{$photoInfo['geo']}'
-              `is_cover` = '{$photoInfo['is_cover']}'
+              `isCover` = '{$photoInfo['isCover']}'
               WHERE `id` = '{$photoID}'";
     $wpdb->query($q);
 
