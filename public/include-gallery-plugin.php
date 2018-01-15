@@ -74,7 +74,7 @@ function uploadified_meta_photos_R()
 function uploadified_meta_debug_R()
 {
     global $wpdb;
-    $realty_fields = $wpdb->get_results("SHOW COLUMNS FROM uploadified_photos", ARRAY_A);
+    $realty_fields = $wpdb->get_results("SHOW COLUMNS FROM impressions_gallery_photos", ARRAY_A);
     $fields = array();
     if (is_array($realty_fields)) foreach ($realty_fields as $f) {
         echo $f['Field'] . ' <span style="color:#ccc">' . $f['Type'] . "</span><br />";

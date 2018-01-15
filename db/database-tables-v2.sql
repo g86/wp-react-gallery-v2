@@ -35,7 +35,9 @@ CREATE TABLE `uploadified_galleries` (
   `impression_date` datetime DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` text,
-  `story` text
+  `story` text,
+  `mapZoomLevel` int(3) DEFAULT NULL
+
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -68,7 +70,7 @@ CREATE TABLE `uploadified_photos` (
   `exifIso` varchar(16) NOT NULL,
   `exifShutter` varchar(16) NOT NULL,
   `exifAperture` varchar(16) NOT NULL,
-  `exifFocalLength` varchar(16) NOT NULL,
+  `exifFocalLength` varchar(16) NOT NULL
 
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
