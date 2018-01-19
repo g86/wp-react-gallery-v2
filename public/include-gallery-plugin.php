@@ -14,7 +14,7 @@ add_action('admin_init', 'include_gallery_init_R');
 
 function include_gallery_init_R()
 {
-    if (@$_GET['post'] && @$_GET['action'] == 'edit') {
+    if ((@$_GET['post'] && @$_GET['action'] == 'edit') || ($_GET['page']== 'uploadified_details_editor_R' && @$_GET['galleryID'])) {
         add_action('admin_head', 'include_gallery_admin_scripts_R');
     }
 
@@ -109,7 +109,7 @@ function handle_gallery_tools() {
     $a_count = 0;
     $deletedPhotos = $wpdb->get_results("SELECT * FROM impressions_gallery_photos WHERE isDeleted = 1",ARRAY_A);
     if (is_array($deletedPhotos) && count($deletedPhotos) > 0) foreach ($deletedPhotos as $a) {
-      $delPath = $_SERVER['DOCUMENT_ROOT'] . $a['photo_path'];
+      $delPath = $_SERVER['DOCUMENT_ROOT'] . $a['photoPath'];
       //echo $delPath . '<br />';
 
       $a_bytes += filesize($delPath);
