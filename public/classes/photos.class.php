@@ -1,5 +1,31 @@
 <?php
 
+define('EXPOSE_FIELDS', array(
+  'id' => true,
+  'objectId' => true,
+  'photoPath' => true,
+  'width' => true,
+  'height' => true,
+  'ratio' => true,
+  'isDeleted' => false,
+  'isPublic' => false,
+  'isCover' => true,
+  'title' => true,
+  'description' => true,
+  'alt' => true,
+  'geo' => true,
+  'exifGeo' => false,
+  'exif' => false,
+  'exifAuthor' => false,
+  'exifTimeCreated' => false,
+  'exifCameraMake' => true,
+  'exifCameraModel' => true,
+  'exifIso' => true,
+  'exifShutter' => true,
+  'exifAperture' => true,
+  'exifFocalLength' => true
+));
+
 class UploadifiedPhotosR
 {
   public function __construct($ID)
@@ -11,9 +37,21 @@ class UploadifiedPhotosR
   public function getPhotos()
   {
     global $wpdb;
-    // select only fields to display...
     // create separate endpoint for admin, or query by role
-    $aPhotos = $wpdb->get_results("SELECT * FROM impressions_gallery_photos WHERE objectId = '{$this->ID}' AND isDeleted = '0' ORDER BY `num` ASC, `id` ASC", ARRAY_A);
+
+    $exposeFieldNames = array();
+
+    foreach (EXPOSE_FIELDS as $field => $expose) {
+      if ($expose) {
+        $exposeFieldNames[] = $field;
+      }
+    }
+
+    $fieldsQueryPart = '`' . implode('`,`', $exposeFieldNames) . '`';
+
+    $q = "SELECT {$fieldsQueryPart} FROM impressions_gallery_photos WHERE objectId = '{$this->ID}' AND isDeleted = '0' ORDER BY `num` ASC, `id` ASC";
+
+    $aPhotos = $wpdb->get_results($q, ARRAY_A);
     return $aPhotos;
   }
 
@@ -81,7 +119,7 @@ class UploadifiedPhotosR
         $fileInfo['isCover'] = '0';
         $fileInfo['width'] = $aNewDimensions['width'];
         $fileInfo['height'] = $aNewDimensions['height'];
-        $fileInfo['ratio'] = intval($aNewDimensions['width'], 10) / intval($aNewDimensions['height'], 10);
+        $fileInfo['ratio'] = (float)($aNewDimensions['width'] / $aNewDimensions['height']);
         $iNewPhotoID = $this->savePhotoData($iObjectID, $sRelativeOriginalPath, $fileInfo);
         $responseData['uploadedPhoto'] = $this->getNewPhotoData($iNewPhotoID);
         $responseData['allPhotos'] = $this->getPhotos();
@@ -100,14 +138,16 @@ class UploadifiedPhotosR
   private function getPhotoParams($EXIF)
   {
     $someData = array(
-      'exifAuthor' => '',
+      'exifAuthor' => isset($EXIF['IFD0']['Artist']) ? $EXIF['IFD0']['Artist'] : '',
       'exifTimeCreated' => isset($EXIF['EXIF']['DateTimeOriginal']) ? $EXIF['EXIF']['DateTimeOriginal'] : '',
       'exifCameraMake' => isset($EXIF['IFD0']['Make']) ? $EXIF['IFD0']['Make'] : '',
       'exifCameraModel' => isset($EXIF['IFD0']['Model']) ? $EXIF['IFD0']['Model'] : '',
       'exifIso' => isset($EXIF['EXIF']['ISOSpeedRatings']) ? $EXIF['EXIF']['ISOSpeedRatings'] : '',
       'exifShutter' => isset($EXIF['EXIF']['ExposureTime']) ? $EXIF['EXIF']['ExposureTime'] : '',
       'exifAperture' => isset($EXIF['EXIF']['FNumber']) ? $EXIF['EXIF']['FNumber'] : '',
-      'exifFocalLength' => isset($EXIF['EXIF']['FocalLengthIn35mmFilm']) ? $EXIF['EXIF']['FocalLengthIn35mmFilm'] : ''
+      'exifFocalLength' => isset($EXIF['EXIF']['FocalLengthIn35mmFilm']) ? $EXIF['EXIF']['FocalLengthIn35mmFilm'] : (
+        isset($EXIF['EXIF']['FocalLength']) ? $EXIF['EXIF']['FocalLength'] : ''
+      )
     );
 
     return $someData;

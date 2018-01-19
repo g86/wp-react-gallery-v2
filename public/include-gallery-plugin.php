@@ -84,7 +84,7 @@ function uploadified_meta_debug_R()
 add_action('admin_menu', 'uploadified_gallery_details_menu_R');
 function uploadified_gallery_details_menu_R()
 {
-    add_menu_page('Gallery Tools [R]', 'Gallery Tools [R]', 'manage_options', 'uploadified_details_editor_R', 'uploadified_gallery_tools_page_R');
+    add_menu_page('Gallery Tools [v2]', 'Gallery Tools [v2]', 'manage_options', 'uploadified_details_editor_R', 'uploadified_gallery_tools_page_R');
 }
 
 function uploadified_gallery_tools_page_R()
@@ -94,5 +94,35 @@ function uploadified_gallery_tools_page_R()
         $galleryID = intval($_GET['galleryID']);
         $oPost = get_post($galleryID);
         require_once('php-includes/gallery-tools-meta-editor.php');
+    } else {
+      handle_gallery_tools();
     }
+
+
+}
+
+function handle_gallery_tools() {
+  global $wpdb;
+
+  if (isset($_POST) && isset($_POST['truncateDeletedPhotos'])) {
+    $a_bytes = 0;
+    $a_count = 0;
+    $deletedPhotos = $wpdb->get_results("SELECT * FROM impressions_gallery_photos WHERE isDeleted = 1",ARRAY_A);
+    if (is_array($deletedPhotos) && count($deletedPhotos) > 0) foreach ($deletedPhotos as $a) {
+      $delPath = $_SERVER['DOCUMENT_ROOT'] . $a['photo_path'];
+      //echo $delPath . '<br />';
+
+      $a_bytes += filesize($delPath);
+      $a_count++;
+      // delete file
+      if (file_exists($delPath)) {
+        unlink($delPath);
+      }
+      // delete db entry
+      $wpdb->query("DELETE FROM impressions_gallery_photos WHERE `id` = '{$a['id']}'");
+    }
+    echo 'Space saved: ' . round($a_bytes / 1048576, 2) . ' MiB ('.$a_count.' items deleted)';
+    // remove empty records, created by WP autosave.
+    // $wpdb->query("DELETE FROM impressions_galleries WHERE `title` ='' AND `description` = '' AND `story` = ''");
+  }
 }
