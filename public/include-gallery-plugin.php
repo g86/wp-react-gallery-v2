@@ -102,11 +102,27 @@ function impressions_gallery_v2_tools_page()
 
 function show_gallery_tools() {
   ?>
-  <form method="post">
-    <p>After deleting pictures their files are not actually removed, but marked as deleted in the database instead - the last option after deleting image by mistake.</p>
-    <p>To free up some space from potentially dead images please use the function below. This will clean files as well as database.</p>
-    <button name="truncateDeletedPhotos" value="truncateDeletedPhotos">Cleanup Image Directories</button>
-  </form>
+  <div class="wrap">
+    <div class="icon32" id="icon-tools"><br></div>
+    <h2>Impressions Gallery v2</h2>
+
+    <div class="tool-box">
+      <form method="post">
+        <p>After deleting pictures their files are not actually removed, but marked as deleted in the database instead - the last option after deleting image by mistake.</p>
+        <p>To free up some space from potentially dead images please use the function below. This will clean files as well as database.</p>
+        <blockquote>
+          <p>
+            <strong>T</strong> - Truncated (was marked as deleted, cleanup File System + DB)<br />
+            <strong>X</strong> - Deleted (was missing on DB, deleted)<br />
+            <strong>E</strong> - Error (file stored in DB, but missing on File System)<br />
+            <strong>_</strong> - Untouched
+          </p>
+        </blockquote>
+        <button name="truncateDeletedPhotos" value="truncateDeletedPhotos">Cleanup Image Directories</button>
+      </form>
+    </div>
+  </div>
+
   <?php
 }
 function handle_gallery_tools() {
@@ -123,7 +139,7 @@ function handle_gallery_tools() {
       // delete file
       if (file_exists($delPath)) {
         unlink($delPath);
-        echo 'X ';
+        echo 'T ';
       } else {
         echo 'E ';
       }
