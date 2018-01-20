@@ -297,7 +297,7 @@ class UploadifiedPhotosR
       'small' => 460,
       'medium' => 720,
       'large' => 1080,
-      'full' => 1440,
+      'full' => 2048,
     );
 
     $newHeight = $imgSizes['full'];

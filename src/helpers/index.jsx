@@ -69,3 +69,7 @@ export const countSizeUploaded = (files) => {
     }
   }, 0)
 }
+
+export const getSizePath = (path, size) => {
+  return path.replace('galleries', `public-images/${size}`)
+}

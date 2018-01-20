@@ -8,5 +8,5 @@
 <!-- for react app -->
 <div id="mountIncludeGallery"></div>
 <div class="in-gallery__footer">
-  <a href="./admin.php?page=uploadified_details_editor_R&galleryID=<?php echo intval($_GET['post']); ?>">Switch to GALLERY-ONLY-SCREEN for better experience &raquo;</a>
+  <a href="./admin.php?page=impressions_gallery_v2&galleryID=<?php echo intval($_GET['post']); ?>">Switch to GALLERY-ONLY-SCREEN for better experience &raquo;</a>
 </div>

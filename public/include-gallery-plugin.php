@@ -14,14 +14,14 @@ add_action('admin_init', 'include_gallery_init_R');
 
 function include_gallery_init_R()
 {
-    if ((@$_GET['post'] && @$_GET['action'] == 'edit') || ($_GET['page']== 'uploadified_details_editor_R' && @$_GET['galleryID'])) {
-        add_action('admin_head', 'include_gallery_admin_scripts_R');
+    if ((@$_GET['post'] && @$_GET['action'] == 'edit') || ($_GET['page']== 'impressions_gallery_v2' && @$_GET['galleryID'])) {
+        add_action('admin_head', 'impressions_gallery_v2_admin_scripts');
     }
 
-    add_action('save_post', 'save_uploadified_gallery_R');
+    add_action('save_post', 'save_impressions_gallery_v2');
 }
 
-function save_uploadified_gallery_R()
+function save_impressions_gallery_v2()
 {
     require_once('classes/uploadified.class.php');
 
@@ -30,7 +30,7 @@ function save_uploadified_gallery_R()
     $oUploadifiedR->saveGallery();
 }
 
-function include_gallery_admin_scripts_R()
+function impressions_gallery_v2_admin_scripts()
 {
     require_once('classes/uploadified.class.php');
 
@@ -60,7 +60,7 @@ function uploadified_meta_boxes_R()
     $oUploadifiedR->loadByID(get_the_ID());
 
     if (get_the_ID()) {
-        add_meta_box('uploadified_metabox_photos_R', 'Gallery Photos [R]', 'uploadified_meta_photos_R', 'post', 'normal', 'high');
+        add_meta_box('uploadified_metabox_photos_R', 'Impressions Gallery v2', 'uploadified_meta_photos_R', 'post', 'normal', 'high');
     }
 
 }
@@ -68,7 +68,7 @@ function uploadified_meta_boxes_R()
 function uploadified_meta_photos_R()
 {
     global $oUploadifiedR;
-    require_once('php-includes/uploadified-meta-photos.php');
+    require_once('php-includes/gallery-meta-box.php');
 }
 
 function uploadified_meta_debug_R()
@@ -84,21 +84,19 @@ function uploadified_meta_debug_R()
 add_action('admin_menu', 'uploadified_gallery_details_menu_R');
 function uploadified_gallery_details_menu_R()
 {
-    add_menu_page('Gallery Tools [v2]', 'Gallery Tools [v2]', 'manage_options', 'uploadified_details_editor_R', 'uploadified_gallery_tools_page_R');
+    add_menu_page('I-Gallery v2', 'I-Gallery v2', 'manage_options', 'impressions_gallery_v2', 'impressions_gallery_v2_tools_page');
 }
 
-function uploadified_gallery_tools_page_R()
+function impressions_gallery_v2_tools_page()
 {
     global $wpdb;
     if (isset($_GET['galleryID'])) {
         $galleryID = intval($_GET['galleryID']);
         $oPost = get_post($galleryID);
-        require_once('php-includes/gallery-tools-meta-editor.php');
+        require_once('php-includes/gallery-tools-page.php');
     } else {
       handle_gallery_tools();
     }
-
-
 }
 
 function handle_gallery_tools() {
@@ -110,8 +108,6 @@ function handle_gallery_tools() {
     $deletedPhotos = $wpdb->get_results("SELECT * FROM impressions_gallery_photos WHERE isDeleted = 1",ARRAY_A);
     if (is_array($deletedPhotos) && count($deletedPhotos) > 0) foreach ($deletedPhotos as $a) {
       $delPath = $_SERVER['DOCUMENT_ROOT'] . $a['photoPath'];
-      //echo $delPath . '<br />';
-
       $a_bytes += filesize($delPath);
       $a_count++;
       // delete file

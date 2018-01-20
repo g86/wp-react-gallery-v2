@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import deleteIcon from '../assets/icons/ic_delete_black_24px.svg'
 import undoIcon from '../assets/icons/ic_undo_black_24px.svg'
+import {getSizePath} from '../helpers'
 
 class Photo extends Component {
   state = {
@@ -74,13 +75,14 @@ class Photo extends Component {
 
     const setDeleteIcon = () => { return {__html: deleteIcon}}
     const setUndoIcon = () => { return {__html: undoIcon}}
+    const imgSrc = getSizePath(photo.photoPath, 'small')
 
     return (
       <div className="in-gallery_photo" key={`${index}_${photo.id}`}>
         <div className="row collapse">
           <div className="column small-12 medium-5 in-gallery_photo-column">
             <a className="in-gallery_photo-link" onClick={onClick.bind(this, photo.id, index)}>
-              <img className="in-gallery_photo-img" src={photo.photoThumbnail} alt={photo.alt}/>
+              <img className="in-gallery_photo-img" src={imgSrc} alt={photo.alt}/>
             </a>
           </div>
           <div className="column small-12 medium-7">
