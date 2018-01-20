@@ -263,7 +263,7 @@ class UploadifiedPhotosR
               `title` = '{$photoInfo['title']}',
               `description` = '{$photoInfo['description']}',
               `alt` = '{$photoInfo['alt']}',
-              `geo` = '{$photoInfo['geo']}'
+              `geo` = '{$photoInfo['geo']}',
               `isCover` = '{$photoInfo['isCover']}'
               WHERE `id` = '{$photoID}'";
     $wpdb->query($q);
