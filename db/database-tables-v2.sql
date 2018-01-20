@@ -48,13 +48,13 @@ CREATE TABLE `uploadified_galleries` (
 
 CREATE TABLE `uploadified_photos` (
   `id` bigint(20) NOT NULL,
-  `object_id` bigint(20) NOT NULL,
-  `photo_path` varchar(255) DEFAULT NULL,
+  `objectId` bigint(20) NOT NULL,
+  `photoPath` varchar(255) DEFAULT NULL,
   `width` varchar(10) DEFAULT NULL,
   `height` varchar(10) DEFAULT NULL,
   `ratio` varchar(32) DEFAULT NULL,
-  `is_public` tinyint(1) DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT '0',
+  `isPublic` tinyint(1) DEFAULT NULL,
+  `isDeleted` tinyint(1) DEFAULT '0',
   `isCover` tinyint(1) DEFAULT '0',
   `num` int(5) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,

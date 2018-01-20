@@ -95,10 +95,20 @@ function impressions_gallery_v2_tools_page()
         $oPost = get_post($galleryID);
         require_once('php-includes/gallery-tools-page.php');
     } else {
+      show_gallery_tools();
       handle_gallery_tools();
     }
 }
 
+function show_gallery_tools() {
+  ?>
+  <form method="post">
+    <p>After deleting pictures their files are not actually removed, but marked as deleted in the database instead - the last option after deleting image by mistake.</p>
+    <p>To free up some space from potentially dead images please use the function below. This will clean files as well as database.</p>
+    <button name="truncateDeletedPhotos" value="truncateDeletedPhotos">Cleanup Image Directories</button>
+  </form>
+  <?php
+}
 function handle_gallery_tools() {
   global $wpdb;
 
@@ -113,11 +123,44 @@ function handle_gallery_tools() {
       // delete file
       if (file_exists($delPath)) {
         unlink($delPath);
+        echo 'X ';
+      } else {
+        echo 'E ';
       }
       // delete db entry
       $wpdb->query("DELETE FROM impressions_gallery_photos WHERE `id` = '{$a['id']}'");
     }
-    echo 'Space saved: ' . round($a_bytes / 1048576, 2) . ' MiB ('.$a_count.' items deleted)';
+    // echo 'Space saved: ' . round($a_bytes / 1048576, 2) . ' MiB ('.$a_count.' items deleted)<br />';
+
+    $dirToScan = $_SERVER['DOCUMENT_ROOT'] . '/galleries';
+    $dirContents = scandir($dirToScan);
+    foreach ($dirContents as $dirItem) {
+      if (preg_match('|^\d+$|Uis', $dirItem)) {
+        // is gallery dir
+        $files = scandir($dirToScan . '/' . $dirItem);
+        if (is_array($files) && count($files) > 0) {
+          foreach ($files as $fileName) {
+            if ($fileName == '.' || $fileName == '..') {
+              continue;
+            }
+            $filePartialPath = '/galleries/' . $dirItem . '/' . $fileName;
+            $fileCheckOnDB = $wpdb->get_results("SELECT * FROM impressions_gallery_photos WHERE `photoPath` = '{$filePartialPath}'", ARRAY_A);
+            if (!is_array($fileCheckOnDB) || count($fileCheckOnDB) == 0) {
+              // echo "-- File <strong>{$filePartialPath}</strong> is not in DB!<br />";
+              echo 'X ';
+              $delPath = $_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $dirItem . '/' . $fileName;
+              unlink($delPath);
+              $a_bytes += filesize($delPath);
+              $a_count++;
+            } else {
+              // echo "File <strong>{$filePartialPath}</strong> is stored in DB!<br />";
+              echo '_ ';
+            }
+          }
+        }
+      }
+    }
+    echo '<br /><br />Space saved: ' . round($a_bytes / 1048576, 2) . ' MiB ('.$a_count.' items deleted)<br />';
     // remove empty records, created by WP autosave.
     // $wpdb->query("DELETE FROM impressions_galleries WHERE `title` ='' AND `description` = '' AND `story` = ''");
   }
