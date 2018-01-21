@@ -14,6 +14,7 @@ header('Content-Type: application/json');
 
 require_once(dirname(__FILE__) . '/../../../wp-load.php');
 require_once(dirname(__FILE__) . '/classes/photos.class.php');
+require_once(dirname(__FILE__) . '/classes/uploadified.class.php');
 
 function endpoint_upload()
 {
@@ -66,6 +67,7 @@ function endpoint_photos()
   if ($objectID > 0) {
     $oUploadifiedPhotosR = new UploadifiedPhotosR($objectID);
     $responseData['allPhotos'] = $oUploadifiedPhotosR->getPhotos();
+    $responseData['galleryMeta'] = $oUploadifiedPhotosR->getGallery();
   } else {
     $responseData['error'] = 'Reference ID is missing.';
   }
@@ -86,12 +88,27 @@ function endpoint_delete()
   }
 
   if ($photoID > 0) {
-    $oUploadifiedPhotosR = new UploadifiedPhotosR($objectID);
+    $oUploadifiedPhotosR = new UploadifiedPhotosR(0);
     $responseData = $oUploadifiedPhotosR->deletePhoto($photoID);
   } else {
     $responseData['error'] = 'Reference ID is missing.';
   }
 
+  echo json_encode($responseData);
+}
+
+function endpoint_updateGallery() {
+  if (!is_user_logged_in() && !IN_GALLERY_DEV_MODE) {
+    die("Access denied.");
+  } else {
+    $oGalleries = new UploadifiedR(false);
+    $oGalleries->saveGallery();
+  }
+}
+function endpoint_voteGallery() {
+  $oGalleries = new UploadifiedR(false);
+  $responseData = array();
+  $responseData['voteCount'] = $oGalleries->voteGallery();
   echo json_encode($responseData);
 }
 
@@ -156,6 +173,12 @@ switch ($_GET['action']) {
     break;
   case "update":
     endpoint_update();
+    break;
+  case "updateGallery":
+    endpoint_updateGallery();
+    break;
+  case "voteGallery":
+    endpoint_voteGallery();
     break;
   case "photos":
     endpoint_photos();

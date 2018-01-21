@@ -30,14 +30,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `uploadified_galleries` (
   `id` bigint(20) NOT NULL,
-  `is_public` tinyint(1) DEFAULT NULL,
-  `is_enabled` tinyint(1) DEFAULT NULL,
-  `impression_date` datetime DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `description` text,
-  `story` text,
   `mapZoomLevel` int(3) DEFAULT NULL
-
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

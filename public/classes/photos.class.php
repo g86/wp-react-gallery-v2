@@ -55,6 +55,16 @@ class UploadifiedPhotosR
     return $aPhotos;
   }
 
+  public function getGallery()
+  {
+    global $wpdb;
+
+    $q = "SELECT * FROM impressions_galleries WHERE `id` = '{$this->ID}'";
+
+    $aGallery = $wpdb->get_row($q, ARRAY_A);
+    return $aGallery;
+  }
+
   public function getPhotosIDs()
   {
     global $wpdb;

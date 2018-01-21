@@ -1,5 +1,5 @@
 <?php
-//require_once('classes/realty.class.php');
+
 require_once(dirname(__FILE__) . '/' . 'photos.class.php');
 
 class UploadifiedR
@@ -37,13 +37,26 @@ class UploadifiedR
     if ($return == true) return $this->aData;
   }
 
+  public function voteGallery() {
+    global $wpdb;
+    $galleryID = intval($_POST['ID'], 10);
+    $q = "UPDATE impressions_galleries SET likesCount = likesCount + 1 WHERE `id`='{$galleryID}'";
+    $wpdb->query($q);
+    $q = "SELECT likesCount FROM impressions_galleries WHERE `id`='{$galleryID}'";
+    $row = $wpdb->get_row($q, ARRAY_A);
+    return $row['likesCount'];
+  }
+
   public function saveGallery()
   {
     global $wpdb;
-    //print_r($_POST); exit;
+
     $aGallery = array(
-      'id' => $_POST['ID'],
-      'mapZoomLevel' => @$_POST['mapZoomLevel']
+      'id' => intval($_POST['ID'],10),
+      'mapZoomLevel' => @$_POST['mapZoomLevel'],
+      'likesCount' => @$_POST['likesCount'],
+      'galleryBackground' => @$_POST['galleryBackground'],
+      'mapCenterGeo' => @$_POST['mapCenterGeo'],
     );
 
     $iGalleryExists = $wpdb->get_var("SELECT COUNT(id) FROM impressions_galleries WHERE `id` = '{$_POST['ID']}'");
@@ -70,7 +83,6 @@ class UploadifiedR
     if (is_dir($_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $iGalleryID . '')) {
       rmdir($_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $iGalleryID . '');
     }
-    //echo "size(MB): " . $sizeMiB."<br />";
   }
 
   private function deleteGalleryPhotos($iGalleryID)
@@ -81,8 +93,6 @@ class UploadifiedR
     $delPhotos = $wpdb->get_results("SELECT * FROM impressions_gallery_photos WHERE objectId = '{$iGalleryID}'", ARRAY_A);
     if (is_array($delPhotos) && count($delPhotos) > 0) foreach ($delPhotos as $a) {
       $delPath = $_SERVER['DOCUMENT_ROOT'] . $a['photoPath'];
-      //echo $delPath . '<br />';
-
       $a_bytes += filesize($delPath);
       $a_count++;
       // delete file
