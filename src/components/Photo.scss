@@ -52,6 +52,7 @@
 .in-gallery_photo-info {
   padding: 10px;
   flex-grow: 1;
+  position: relative;
 }
 
 .in-gallery_caption {
@@ -67,6 +68,9 @@
 .in-gallery_photo-controls {
   text-align: right;
   flex-grow: 0;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 }
 
 .in-gallery_photo-description {

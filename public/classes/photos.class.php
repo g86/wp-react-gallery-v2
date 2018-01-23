@@ -1,35 +1,88 @@
 <?php
 
+define('EXPOSE_FIELDS', array(
+  'id' => true,
+  'objectId' => true,
+  'photoPath' => true,
+  'width' => true,
+  'height' => true,
+  'ratio' => true,
+  'isDeleted' => false,
+  'isPublic' => false,
+  'isCover' => true,
+  'title' => true,
+  'description' => true,
+  'alt' => true,
+  'geo' => true,
+  'exifGeo' => false,
+  'exif' => false,
+  'exifAuthor' => false,
+  'exifTimeCreated' => false,
+  'exifCameraMake' => true,
+  'exifCameraModel' => true,
+  'exifIso' => true,
+  'exifShutter' => true,
+  'exifAperture' => true,
+  'exifFocalLength' => true
+));
+
 class UploadifiedPhotosR
 {
   public function __construct($ID)
   {
     $this->ID = $ID;
-    $this->defaultPhotoPath = '/photo-content/no-photo.jpg';
+    $this->defaultPhotoPath = '/galleries/no-photo.jpg';
   }
 
   public function getPhotos()
   {
     global $wpdb;
-    $aPhotos = $wpdb->get_results("SELECT * FROM uploadified_photos WHERE object_id = '{$this->ID}' AND is_deleted = '0' ORDER BY `num` ASC, `id` ASC", ARRAY_A);
+    // create separate endpoint for admin, or query by role
+
+    $exposeFieldNames = array();
+
+    foreach (EXPOSE_FIELDS as $field => $expose) {
+      if ($expose) {
+        $exposeFieldNames[] = $field;
+      }
+    }
+
+    $fieldsQueryPart = '`' . implode('`,`', $exposeFieldNames) . '`';
+
+    $q = "SELECT {$fieldsQueryPart} FROM impressions_gallery_photos WHERE objectId = '{$this->ID}' AND isDeleted = '0' ORDER BY `num` ASC, `id` ASC";
+
+    $aPhotos = $wpdb->get_results($q, ARRAY_A);
     return $aPhotos;
+  }
+
+  public function getGallery()
+  {
+    global $wpdb;
+
+    $q = "SELECT * FROM impressions_galleries WHERE `id` = '{$this->ID}'";
+
+    $aGallery = $wpdb->get_row($q, ARRAY_A);
+    return $aGallery;
   }
 
   public function getPhotosIDs()
   {
     global $wpdb;
-    $aPhotos = $wpdb->get_results("SELECT `id` FROM uploadified_photos WHERE object_id = '{$this->ID}' AND is_deleted = '0' ORDER BY `num` ASC, `id` ASC", ARRAY_A);
+    $aPhotos = $wpdb->get_results("SELECT `id` FROM impressions_gallery_photos WHERE objectId = '{$this->ID}' AND isDeleted = '0' ORDER BY `num` ASC, `id` ASC", ARRAY_A);
     $aIDs = array();
     if (count($aPhotos) > 0) foreach ($aPhotos as $a) {
       $aIDs[] = $a['id'];
     }
     return $aIDs;
   }
-  private function createTargetDir($absTargetDir) {
+
+  private function createTargetDir($absTargetDir)
+  {
     if (!is_dir($absTargetDir)) {
       mkdir($absTargetDir, 0755, true);
     }
   }
+
   public function uploadPhoto($iObjectID, $fileInfo)
   {
     ini_set('memory_limit', '512M');
@@ -39,8 +92,8 @@ class UploadifiedPhotosR
 
       //$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
 
-      $absPathWatermark = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/plugins/uploadified-gallery/watermarks/impressions-watermark.png';
-      $absTargetDir = $_SERVER['DOCUMENT_ROOT'] . '/photo-content/' . $iObjectID . '/';
+      $absPathWatermark = false;
+      $absTargetDir = $_SERVER['DOCUMENT_ROOT'] . '/galleries/' . $iObjectID . '/';
       $absTargetDir = str_replace('//', '/', $absTargetDir);
 
       $this->createTargetDir($absTargetDir);
@@ -57,7 +110,9 @@ class UploadifiedPhotosR
       $EXIF = $this->getExifData($tempUploadedFile);
 
       $fileInfo['geo'] = $this->getGpsData($tempUploadedFile);
+
       $fileInfo['exif'] = json_encode($EXIF);
+      $fileInfo = array_merge($fileInfo, $this->getPhotoParams($EXIF));
 
       if (in_array(strtolower($fileExtension), $typesArray)) {
         // Uncomment the following line if you want to make the directory if it doesn't exist
@@ -68,10 +123,16 @@ class UploadifiedPhotosR
         $sRelativeOriginalPath = str_replace($_SERVER['DOCUMENT_ROOT'], '', $absTargetFile);
         //$sWatermarkedCopyPath = preg_replace('|nt-originals|Uis','nt-photos',$sourceFile);
 
-        $this->resizeSavedPhoto($sRelativeOriginalPath, $sRelativeOriginalPath, $absPathWatermark, $EXIF);
+        $aNewDimensions = $this->resizeSavedPhoto($sRelativeOriginalPath, $sRelativeOriginalPath, $absPathWatermark, $EXIF);
+        $fileInfo['is_deleted'] = '0';
+        $fileInfo['is_public'] = '1';
+        $fileInfo['isCover'] = '0';
+        $fileInfo['width'] = $aNewDimensions['width'];
+        $fileInfo['height'] = $aNewDimensions['height'];
+        $fileInfo['ratio'] = (float)($aNewDimensions['width'] / $aNewDimensions['height']);
         $iNewPhotoID = $this->savePhotoData($iObjectID, $sRelativeOriginalPath, $fileInfo);
         $responseData['uploadedPhoto'] = $this->getNewPhotoData($iNewPhotoID);
-        $responseData['allPhotos'] = $this->getPhotos();
+        $responseData['galleryPhotos'] = $this->getPhotos();
         $responseData['status'] = 'OK';
       } else {
         $responseData['error'] = 'API: Invalid file type.';
@@ -82,6 +143,24 @@ class UploadifiedPhotosR
       $responseData['status'] = 'FAILED';
     }
     return $responseData;
+  }
+
+  private function getPhotoParams($EXIF)
+  {
+    $someData = array(
+      'exifAuthor' => isset($EXIF['IFD0']['Artist']) ? $EXIF['IFD0']['Artist'] : '',
+      'exifTimeCreated' => isset($EXIF['EXIF']['DateTimeOriginal']) ? $EXIF['EXIF']['DateTimeOriginal'] : '',
+      'exifCameraMake' => isset($EXIF['IFD0']['Make']) ? $EXIF['IFD0']['Make'] : '',
+      'exifCameraModel' => isset($EXIF['IFD0']['Model']) ? $EXIF['IFD0']['Model'] : '',
+      'exifIso' => isset($EXIF['EXIF']['ISOSpeedRatings']) ? $EXIF['EXIF']['ISOSpeedRatings'] : '',
+      'exifShutter' => isset($EXIF['EXIF']['ExposureTime']) ? $EXIF['EXIF']['ExposureTime'] : '',
+      'exifAperture' => isset($EXIF['EXIF']['FNumber']) ? $EXIF['EXIF']['FNumber'] : '',
+      'exifFocalLength' => isset($EXIF['EXIF']['FocalLengthIn35mmFilm']) ? $EXIF['EXIF']['FocalLengthIn35mmFilm'] : (
+        isset($EXIF['EXIF']['FocalLength']) ? $EXIF['EXIF']['FocalLength'] : ''
+      )
+    );
+
+    return $someData;
   }
 
   private function getGpsData($filename)
@@ -133,30 +212,35 @@ class UploadifiedPhotosR
   public function savePhotoData($iObjectID, $filePath, $fileInfo)
   {
     global $wpdb;
+    
+    $fieldNames = array(
+      'id' => '',
+      'objectId' => $iObjectID,
+      'photoPath' => $filePath,
+      'width' => $fileInfo['width'],
+      'height' => $fileInfo['height'],
+      'ratio' => $fileInfo['ratio'],
+      'isDeleted' => $fileInfo['isDeleted'],
+      'isPublic' => $fileInfo['isPublic'],
+      'isCover' => $fileInfo['isCover'],
+      'title' => $fileInfo['title'],
+      'description' => $fileInfo['description'],
+      'alt' => $fileInfo['alt'],
+      'geo' => $fileInfo['geo'],
+      'exifGeo' => $fileInfo['exifGeo'],
+      'exif' => $fileInfo['exif'],
+      'exifAuthor' => $fileInfo['exifAuthor'],
+      'exifTimeCreated' => $fileInfo['exifTimeCreated'],
+      'exifCameraMake' => $fileInfo['exifCameraMake'],
+      'exifCameraModel' => $fileInfo['exifCameraModel'],
+      'exifIso' => $fileInfo['exifIso'],
+      'exifShutter' => $fileInfo['exifShutter'],
+      'exifAperture' => $fileInfo['exifAperture'],
+      'exifFocalLength' => $fileInfo['exifFocalLength']
+    );
 
-    $q = "INSERT INTO uploadified_photos (
-                    `id`,
-                    `object_id`,
-                    `photo_path`,
-                    `is_deleted`,
-                    `is_public`,
-                    `title`,
-                    `description`,
-                    `alt`,
-                    `geo`,
-                    `exif`
-                  ) VALUES (
-                    '',
-                    '{$iObjectID}',
-                    '{$filePath}',
-                    '0',
-                    '1',
-                    '{$fileInfo['title']}',
-                    '{$fileInfo['description']}',
-                    '{$fileInfo['alt']}',
-                    '{$fileInfo['geo']}',
-                    '{$fileInfo['exif']}'
-                  )";
+
+    $q = "INSERT INTO impressions_gallery_photos (`" . implode("`,`", array_keys($fieldNames)) . "`) VALUES ('" . implode("','", $fieldNames) . "')";
 
     $wpdb->query($q);
 
@@ -166,10 +250,10 @@ class UploadifiedPhotosR
   public function deletePhoto($sPhotoID)
   {
     global $wpdb;
-    $q = "UPDATE uploadified_photos SET is_deleted = 1 WHERE id = '{$sPhotoID}'";
+    $q = "UPDATE impressions_gallery_photos SET isDeleted = 1 WHERE id = '{$sPhotoID}'";
     $wpdb->query($q);
     return array(
-      'allPhotos' => $this->getPhotos(),
+      'galleryPhotos' => $this->getPhotos(),
       'message' => 'ok',
       'query' => $q,
       'db_response' => $wpdb->last_error
@@ -179,17 +263,18 @@ class UploadifiedPhotosR
   public function deletePhotos()
   {
     global $wpdb;
-    $wpdb->query("UPDATE uploadified_photos SET is_deleted = 1 WHERE object_id = '{$this->ID}'");
+    $wpdb->query("UPDATE impressions_gallery_photos SET isDeleted = 1 WHERE object_id = '{$this->ID}'");
   }
 
   public function updatePhotoInfo($photoID, $photoInfo)
   {
     global $wpdb;
-    $q = "UPDATE uploadified_photos SET 
+    $q = "UPDATE impressions_gallery_photos SET 
               `title` = '{$photoInfo['title']}',
               `description` = '{$photoInfo['description']}',
               `alt` = '{$photoInfo['alt']}',
-              `geo` = '{$photoInfo['geo']}'
+              `geo` = '{$photoInfo['geo']}',
+              `isCover` = '{$photoInfo['isCover']}'
               WHERE `id` = '{$photoID}'";
     $wpdb->query($q);
 
@@ -219,12 +304,13 @@ class UploadifiedPhotosR
     }
 
     $imgSizes = array(
-      'small'=> 460,
-      'medium'=> 720,
-      'large'=> 1080
+      'small' => 460,
+      'medium' => 720,
+      'large' => 1080,
+      'full' => 2048,
     );
 
-    $newHeight = $imgSizes['large'];
+    $newHeight = $imgSizes['full'];
 
     list($origWidth, $origHeight, $origType) = getimagesize($sourceAbsoluteFile);
     $imageType = image_type_to_mime_type($origType);
@@ -294,19 +380,23 @@ class UploadifiedPhotosR
         break;
     }
     chmod($targetAbsoluteFile, 0777);
+
+    $storedDimensions = array('width' => $newWidth, 'height' => $newHeight);
+
+    return $storedDimensions;
   }
 
   public function getPhoto($sPhotoID)
   {
     global $wpdb;
-    return $wpdb->get_row("SELECT * FROM uploadified_photos WHERE id = '{$sPhotoID}'", ARRAY_A);
+    return $wpdb->get_row("SELECT * FROM impressions_gallery_photos WHERE id = '{$sPhotoID}'", ARRAY_A);
   }
 
   public function getFirstPhoto($sObjectID)
   {
     global $wpdb;
     if (!$sObjectID) $sObjectID = $this->ID;
-    $sPath = $wpdb->get_var("SELECT photo_path FROM uploadified_photos WHERE object_id = '{$sObjectID}' AND is_deleted = '0' ORDER BY `num` ASC, `id` ASC LIMIT 0,1");
+    $sPath = $wpdb->get_var("SELECT photoPath FROM impressions_gallery_photos WHERE objectId = '{$sObjectID}' AND isDeleted = '0' ORDER BY `num` ASC, `id` ASC LIMIT 0,1");
     //if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $sPath) || !$sPath) return $this->defaultPhotoPath;
     if (!$sPath) return $this->defaultPhotoPath;
     else return $sPath;
@@ -316,23 +406,13 @@ class UploadifiedPhotosR
   {
     global $wpdb;
     if (!$sObjectID) $sObjectID = $this->ID;
-    return $wpdb->get_var("SELECT photo_path FROM uploadified_photos WHERE object_id = '{$sObjectID}' AND is_deleted = '0' ORDER BY `num` ASC, `id` ASC LIMIT 0,1");
+    return $wpdb->get_var("SELECT photoPath FROM impressions_gallery_photos WHERE objectId = '{$sObjectID}' AND isDeleted = '0' ORDER BY `num` ASC, `id` ASC LIMIT 0,1");
   }
 
   public function getNewPhotoData($ID)
   {
     global $wpdb;
-    return $wpdb->get_row("SELECT * FROM uploadified_photos WHERE id = '{$ID}'", ARRAY_A);
-  }
-
-  public function showNewPhoto($ID)
-  {
-    global $wpdb;
-    $photo = $wpdb->get_row("SELECT * FROM uploadified_photos WHERE id = '{$ID}'", ARRAY_A);
-    echo '<div class="photo-item" id="photo_' . $ID . '">';
-    echo '<a href="/photo.php?src=' . urlencode($photo['photo_path']) . '&zc=0&h=480&q=90" class="fancybox" rel="group" id="impression_' . $ID . '"><img src="/photo.php?src=' . urlencode($photo['photo_path']) . '&zc=1&w=80&h=80&q=100&s=1" /></a>';
-    echo '<div class="delete-photo"><a href="#" rel="' . $ID . '">&nbsp;</a></div>';
-    echo '</div>';
+    return $wpdb->get_row("SELECT * FROM impressions_gallery_photos WHERE id = '{$ID}'", ARRAY_A);
   }
 
   public function sortPhotos($sObjectID)
@@ -343,7 +423,7 @@ class UploadifiedPhotosR
       $aIDs = array();
       foreach ($aPhStr as $NUM => $val) {
         list($trash, $ID) = split("_", $val);
-        $q = "UPDATE uploadified_photos SET num = '{$NUM}' WHERE id = '{$ID}'";
+        $q = "UPDATE impressions_gallery_photos SET num = '{$NUM}' WHERE id = '{$ID}'";
         $wpdb->query($q);
       }
       echo "Sort complete.";

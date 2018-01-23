@@ -1,4 +1,3 @@
-
 const TEST_HOST = window.IN_GALLERY_TEST_HOST || 'http://localhost'
 export const TEST_UPLOAD_URL = `${TEST_HOST}/wp-content/plugins/include-gallery/api.php?action=upload`
 export const TEST_DELETE_URL = `${TEST_HOST}/wp-content/plugins/include-gallery/api.php?action=delete`
@@ -29,36 +28,16 @@ export const isJSON = (str) => {
 export const formatPhotosObject = (photos) => {
   return photos.map(photo => {
     let exifData = photo.exif
-    if (isJSON(photo.exif)){
+    if (isJSON(photo.exif)) {
       exifData = JSON.parse(photo.exif)
     }
     return {
-      "id": photo.id,
-      "galleryId": photo.object_id,
-      "order": photo.num,
-      "photoThumbnail": photo.photo_path,
-      "photoMedium": photo.photo_path,
-      "photoLarge": photo.photo_path,
-      "photoOriginal": photo.photo_path,
-      "timeCreated": "",
-      "isExceptional": photo.is_impressive,
-      "isPanorama": true,
-      "isWallpaper": false,
-      "isCover": photo.is_header,
-      "alt": photo.alt,
-      "geo": photo.geo,
-      "exif": exifData,
-      "title": photo.title,
-      "description": photo.description,
-      "rating": "",
-      "keywords": "",
-      "category": "",
-      "author": "",
-      "camera": "",
-      "iso": "",
-      "shutter": "",
-      "aperture": "",
-      "focalLength": ""
+      ...photo,
+      "galleryId": photo.objectId,
+      "photoThumbnail": photo.photoPath,
+      "photoMedium": photo.photoPath,
+      "photoLarge": photo.photoPath,
+      "photoOriginal": photo.photoPath
     }
   })
 }
@@ -76,17 +55,21 @@ export const countFilesToBeUploaded = (files) => {
 export const countSizeToBeUploaded = (files) => {
   return files.reduce((uploadsPending, file) => {
     uploadsPending += file.size
-    return  uploadsPending
+    return uploadsPending
   }, 0)
 }
 
 export const countSizeUploaded = (files) => {
   return files.reduce((uploadsPending, file) => {
     if (file.isUploaded === false && file.error === false) {
-      return  uploadsPending
+      return uploadsPending
     } else {
       uploadsPending = uploadsPending + file.size
-      return  uploadsPending
+      return uploadsPending
     }
   }, 0)
+}
+
+export const getSizePath = (path, size) => {
+  return path.replace('galleries', `public-images/${size}`)
 }

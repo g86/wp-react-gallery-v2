@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
+import {getSizePath} from '../helpers'
 
 class FlexModal extends Component {
 
@@ -85,6 +86,8 @@ class FlexModal extends Component {
   render() {
     const {onClose, photo, onNavigation} = this.props
     const {imageStyle} = this.state
+    const imgSrc = getSizePath(photo.photoPath, 'full')
+
     return (
       <div className="in-flexModal" ref="flexModal">
         <div className="in-flexModalOverlay" onClick={onClose.bind(this)}>
@@ -99,7 +102,7 @@ class FlexModal extends Component {
             <div className="in-flexModalImageTitle">{photo.title}</div>
 
             <img className="in-flexImage"
-                 src={photo.photoThumbnail}
+                 src={imgSrc}
                  style={imageStyle}
                  alt={photo.alt}
                  ref="flexImage"/>

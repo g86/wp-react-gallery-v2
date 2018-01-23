@@ -17,6 +17,7 @@ html, body {
   font-family: 'Open Sans', Verdana, sans-serif;
   font-size: 12px;
 }
+
 #mountIncludeGallery {
 
   // @include foundation-typography;
@@ -29,24 +30,7 @@ html, body {
   @import '../../components/Photos';
 }
 
-.in-gallery {
-  background-color: #f5f5f5;
-  padding: 15px 10px;
-}
-
-
 #uploadified_metabox_photos_R {
-  .button-link {
-    background-color: rgba(255, 255, 255, 0.3);
-  }
-  .ui-sortable-handle {
-    background-color: #23282d;
-    color: #fff;
-  }
-  > .inside {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
   .in-gallery__footer {
     text-align: center;
     padding: 8px 0;
