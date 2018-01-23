@@ -66,7 +66,7 @@ class UploadPhotos extends Component {
     return Axios.post(uploadUrl, data, config)
       .then(function (res) {
         console.log("Uploaded, response: ", res)
-        self.props.onUpload(formatPhotosObject(res.data.allPhotos))
+        self.props.onUpload(formatPhotosObject(res.data.galleryPhotos))
         self.updateFileStatus(fileToBeUploaded, 'uploaded')
         self.uploadNextFile()
       })

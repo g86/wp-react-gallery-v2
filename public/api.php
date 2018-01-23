@@ -66,7 +66,7 @@ function endpoint_photos()
   $responseData = array();
   if ($objectID > 0) {
     $oUploadifiedPhotosR = new UploadifiedPhotosR($objectID);
-    $responseData['allPhotos'] = $oUploadifiedPhotosR->getPhotos();
+    $responseData['galleryPhotos'] = $oUploadifiedPhotosR->getPhotos();
     $responseData['galleryMeta'] = $oUploadifiedPhotosR->getGallery();
   } else {
     $responseData['error'] = 'Reference ID is missing.';
@@ -108,7 +108,8 @@ function endpoint_updateGallery() {
 function endpoint_voteGallery() {
   $oGalleries = new UploadifiedR(false);
   $responseData = array();
-  $responseData['voteCount'] = $oGalleries->voteGallery();
+  $responseData['galleryMeta'] = array();
+  $responseData['galleryMeta']['voteCount'] = $oGalleries->voteGallery();
   echo json_encode($responseData);
 }
 

@@ -39,8 +39,8 @@ class UploadifiedR
 
   public function voteGallery() {
     global $wpdb;
-    $galleryID = intval($_POST['ID'], 10);
-    $q = "UPDATE impressions_galleries SET likesCount = likesCount + 1 WHERE `id`='{$galleryID}'";
+    $galleryID = intval($_GET['referenceID'], 10);
+    $q = "UPDATE impressions_galleries SET `likesCount` = `likesCount` + 1 WHERE `id`='{$galleryID}'";
     $wpdb->query($q);
     $q = "SELECT likesCount FROM impressions_galleries WHERE `id`='{$galleryID}'";
     $row = $wpdb->get_row($q, ARRAY_A);

@@ -132,7 +132,7 @@ class UploadifiedPhotosR
         $fileInfo['ratio'] = (float)($aNewDimensions['width'] / $aNewDimensions['height']);
         $iNewPhotoID = $this->savePhotoData($iObjectID, $sRelativeOriginalPath, $fileInfo);
         $responseData['uploadedPhoto'] = $this->getNewPhotoData($iNewPhotoID);
-        $responseData['allPhotos'] = $this->getPhotos();
+        $responseData['galleryPhotos'] = $this->getPhotos();
         $responseData['status'] = 'OK';
       } else {
         $responseData['error'] = 'API: Invalid file type.';
@@ -253,7 +253,7 @@ class UploadifiedPhotosR
     $q = "UPDATE impressions_gallery_photos SET isDeleted = 1 WHERE id = '{$sPhotoID}'";
     $wpdb->query($q);
     return array(
-      'allPhotos' => $this->getPhotos(),
+      'galleryPhotos' => $this->getPhotos(),
       'message' => 'ok',
       'query' => $q,
       'db_response' => $wpdb->last_error
