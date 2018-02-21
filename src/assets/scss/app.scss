@@ -1,11 +1,8 @@
 @import '~foundation-sites/scss/foundation';
 // @import '~foundation-sites/scss/grid/grid';
-
 // @include foundation-global-styles;
-
 // @include foundation-forms;
 // @include foundation-typography;
-
 @import "vars";
 @import "flexModal";
 
@@ -35,11 +32,12 @@ html, body {
     text-align: center;
     padding: 8px 0;
     background-color: #c3c5c9;
-    border: 1px solid #ccc;
+    border: 1px solid #999;
     border-radius: 2px;
     > a {
       color: #fff;
       text-decoration: none;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.33);
     }
   }
 }
