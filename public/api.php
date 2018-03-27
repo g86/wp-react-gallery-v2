@@ -109,7 +109,7 @@ function endpoint_voteGallery() {
   $oGalleries = new UploadifiedR(false);
   $responseData = array();
   $responseData['galleryMeta'] = array();
-  $responseData['galleryMeta']['likesCount'] = $oGalleries->voteGallery();
+  $responseData['galleryMeta']['voteCount'] = $oGalleries->voteGallery();
   echo json_encode($responseData);
 }
 

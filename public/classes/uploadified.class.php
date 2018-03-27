@@ -40,11 +40,11 @@ class UploadifiedR
   public function voteGallery() {
     global $wpdb;
     $galleryID = intval($_GET['referenceID'], 10);
-    $q = "UPDATE impressions_galleries SET `likesCount` = `likesCount` + 1 WHERE `id`='{$galleryID}'";
+    $q = "UPDATE impressions_galleries SET `voteCount` = `voteCount` + 1 WHERE `id`='{$galleryID}'";
     $wpdb->query($q);
-    $q = "SELECT likesCount FROM impressions_galleries WHERE `id`='{$galleryID}'";
+    $q = "SELECT voteCount FROM impressions_galleries WHERE `id`='{$galleryID}'";
     $row = $wpdb->get_row($q, ARRAY_A);
-    return $row['likesCount'];
+    return $row['voteCount'];
   }
 
   public function saveGallery()
@@ -54,7 +54,7 @@ class UploadifiedR
     $aGallery = array(
       'id' => intval($_POST['ID'],10),
       'mapZoomLevel' => @$_POST['mapZoomLevel'],
-      'likesCount' => @$_POST['likesCount'],
+      'voteCount' => @$_POST['voteCount'],
       'galleryBackground' => @$_POST['galleryBackground'],
       'mapCenterGeo' => @$_POST['mapCenterGeo'],
     );
