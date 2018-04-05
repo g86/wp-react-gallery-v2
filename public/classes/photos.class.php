@@ -1,6 +1,6 @@
 <?php
 
-define('EXPOSE_FIELDS', array(
+$EXPOSE_FIELDS = array(
   'id' => true,
   'objectId' => true,
   'photoPath' => true,
@@ -24,7 +24,7 @@ define('EXPOSE_FIELDS', array(
   'exifShutter' => true,
   'exifAperture' => true,
   'exifFocalLength' => true
-));
+);
 
 class UploadifiedPhotosR
 {
@@ -41,7 +41,7 @@ class UploadifiedPhotosR
 
     $exposeFieldNames = array();
 
-    foreach (EXPOSE_FIELDS as $field => $expose) {
+    foreach ($EXPOSE_FIELDS as $field => $expose) {
       if ($expose) {
         $exposeFieldNames[] = $field;
       }
