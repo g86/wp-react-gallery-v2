@@ -1,6 +1,6 @@
 <?php
 
-$EXPOSE_FIELDS = array(
+global $exposeFields = array(
   'id' => true,
   'objectId' => true,
   'photoPath' => true,
@@ -41,7 +41,7 @@ class UploadifiedPhotosR
 
     $exposeFieldNames = array();
 
-    foreach ($EXPOSE_FIELDS as $field => $expose) {
+    foreach ($exposeFields as $field => $expose) {
       if ($expose) {
         $exposeFieldNames[] = $field;
       }
