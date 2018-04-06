@@ -1,6 +1,5 @@
 <?php
 
-global $exposeFields;
 $exposeFields = array(
   'id' => true,
   'objectId' => true,
@@ -37,7 +36,7 @@ class UploadifiedPhotosR
 
   public function getPhotos()
   {
-    global $wpdb;
+    global $wpdb, $exposeFields;
     // create separate endpoint for admin, or query by role
 
     $exposeFieldNames = array();
