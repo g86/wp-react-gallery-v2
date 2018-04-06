@@ -1,6 +1,7 @@
 <?php
 
-global $exposeFields = array(
+global $exposeFields;
+$exposeFields = array(
   'id' => true,
   'objectId' => true,
   'photoPath' => true,
