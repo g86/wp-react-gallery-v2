@@ -3,6 +3,13 @@ import deleteIcon from '../assets/icons/ic_delete_black_24px.svg'
 import undoIcon from '../assets/icons/ic_undo_black_24px.svg'
 import {RESOURCE_HOST} from '../config'
 import {getSizePath} from '../helpers'
+import {Parser} from 'expr-eval'
+
+const MathParser = new Parser()
+
+const executeMath = (expression) => {
+  return MathParser.evaluate(expression)
+}
 
 class Photo extends Component {
   state = {
@@ -138,7 +145,7 @@ class Photo extends Component {
                   Camera: {String(photo.exifCameraMake).toUpperCase()} {photo.exifCameraModel}<br />
                   ISO: {photo.exifIso} |
                   Shutter: {photo.exifShutter} |
-                  Aperture: f{photo.exifAperture} |
+                  Aperture: f{executeMath(photo.exifAperture)} |
                   Focal length: {photo.exifFocalLength}mm<br />
                 </div>
                 <div className="in-gallery_photo-alt">
