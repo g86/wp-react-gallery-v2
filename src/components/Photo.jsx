@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import deleteIcon from '../assets/icons/ic_delete_black_24px.svg'
 import undoIcon from '../assets/icons/ic_undo_black_24px.svg'
+import {RESOURCE_HOST} from '../config'
 import {getSizePath} from '../helpers'
 
 class Photo extends Component {
@@ -75,7 +76,7 @@ class Photo extends Component {
 
     const setDeleteIcon = () => { return {__html: deleteIcon}}
     const setUndoIcon = () => { return {__html: undoIcon}}
-    const imgSrc = getSizePath(photo.photoPath, 'small')
+    const imgSrc = getSizePath(`${RESOURCE_HOST}${photo.photoPath}`,'small')
 
     return (
       <div className="in-gallery_photo" key={`${index}_${photo.id}`}>
@@ -129,9 +130,19 @@ class Photo extends Component {
               <div className="in-gallery_photo-info">
                 <div className="in-gallery_photo-title">{photo.title || 'No title...'}</div>
                 <div className="in-gallery_photo-description">
-                  <span className="in-gallery_caption">Description:</span> {photo.description}</div>
+                  <span className="in-gallery_caption">Description:</span> {photo.description}
+                </div>
+                <div className="in-gallery_photo-description">
+                  <span className="in-gallery_caption">Details:</span><br />
+                  Size: {photo.width}x{photo.height}<br />
+                  Camera: {String(photo.exifCameraMake).toUpperCase()} {photo.exifCameraModel}<br />
+                  ISO: {photo.exifIso} |
+                  Shutter: {photo.exifShutter} |
+                  Aperture: f{photo.exifAperture} |
+                  Focal length: {photo.exifFocalLength}mm<br />
+                </div>
                 <div className="in-gallery_photo-alt">
-                  <span className="in-gallery_caption">URL friendly name:</span> {photo.alt}</div>
+                  <span className="in-gallery_caption">URL friendly name (alt):</span> {photo.alt}</div>
                 <div className="in-gallery_photo-gps">
                   <span className="in-gallery_caption">GEO:</span> {photoHasGeo && this.renderGoogleMaps(photo.geo)}
                 </div>

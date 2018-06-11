@@ -26,7 +26,7 @@ class App extends Component {
     console.log("Gallery ID: ", activePostId || "No Gallery ID available")
 
     if (!activePostId) {
-      this.setState({photos: galleryMock.results})
+      this.setState({photos: galleryMock.galleryPhotos})
     }
   }
 

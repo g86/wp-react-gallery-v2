@@ -21,12 +21,13 @@
   height: 100%;
   width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* box itself */
 .in-flexModalBox {
-  background-color: #fff;
-  margin: 15px;
+  background-color: #000;
+  // margin: 15px;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   border-radius: 2px;
@@ -39,49 +40,84 @@
   display: block;
   width: 100%;
   height: auto;
+  filter: blur(0);
+  transition-duration: 0s;
+  transition-property: filter, transform;
+  transform: scale(1);
+  &.in-flexImage-loading {
+    filter: blur(10px);
+    transform: scale(1.1);
+    transition-property: filter, transform;
+    transition-duration: 0.2s;
+  }
 }
 
 /* modal buttons */
 .in-flexModalNavArrow {
   cursor: pointer;
   user-select: none;
-  top: 50%;
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.1);
+  top: 0;
+  height: 100%;
+  width: 40%;
+  z-index: 10;
+
   transition-duration: 0.3s;
+
+  &:hover {
+    .in-flexModalArrowCircle {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  &.in-flexModalNavArrowLeft {
+    left: 0;
+    .in-flexModalArrowCircle {
+      left: 15px;
+    }
+  }
+
+  &.in-flexModalNavArrowRight {
+    right: 0;
+    .in-flexModalArrowCircle {
+      right: 15px;
+    }
+  }
+}
+
+.in-flexModalArrowCircle {
+  background-color: rgba(255, 255, 255, 0.3);
+  position: absolute;
   padding: 15px;
   width: 25px;
   height: 25px;
+  top: 50%;
   transform: translate(0, -25px);
   border-radius: 50px;
   color: #000;
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-  }
+  box-sizing: border-box;
   > i {
     font-size: 25px;
     color: #000;
+
+    position: absolute;
+    left: 3px;
+    top: 3px;
   }
-}
-
-.in-flexModalNavArrowLeft {
-  left: 15px;
-}
-
-.in-flexModalNavArrowRight {
-  right: 15px;
 }
 
 .in-flexModalNavClose {
   cursor: pointer;
   user-select: none;
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 0;
+  top: 0;
+  padding: 10px 10px 35px 35px;
   color: #000;
+  z-index: 20;
   > i {
     color: #000;
-    text-shadow: rgba(255,255,255,0.5);
+    text-shadow: rgba(255, 255, 255, 0.5);
   }
 }
 
@@ -95,9 +131,25 @@
   background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   padding: 5px 35px 55px;
-  border-radius: 50px;
+  border-radius: 3px;
   white-space: nowrap;
   @media all and (max-width: 400px) {
     white-space: normal;
   }
+}
+
+.in-flexModalImageLoader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+  margin-left: -150px;
+  width: 300px;
+  margin-top: -68px;
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  font-size: 15px;
+  z-index: 999;
+  pointer-events: none;
+  transition-duration: 0.2s;
 }
