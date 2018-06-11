@@ -4,7 +4,6 @@
 // @include foundation-forms;
 // @include foundation-typography;
 @import "vars";
-@import "../../components/FlexModal/FlexModal";
 
 html, body {
   height: 100%;
@@ -25,6 +24,7 @@ html, body {
   @import '../../components/UploadPhotos';
   @import '../../components/Photo';
   @import '../../components/Photos';
+  @import "../../components/FlexModal/FlexModal";
 
   * {
     box-sizing: border-box;
