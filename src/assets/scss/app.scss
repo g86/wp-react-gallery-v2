@@ -25,6 +25,10 @@ html, body {
   @import '../../components/UploadPhotos';
   @import '../../components/Photo';
   @import '../../components/Photos';
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
 #uploadified_metabox_photos_R {
