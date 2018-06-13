@@ -21,7 +21,7 @@ class Photos extends Component {
     const { photos } = this.props
     return (
       <section className="in-gallery_photos">
-        {this.renderPhotos(photos)}
+        {photos.length > 0 && this.renderPhotos(photos)}
       </section>
     )
   }
