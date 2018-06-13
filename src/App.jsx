@@ -39,7 +39,13 @@ class App extends Component {
     let self = this
     return Axios.get(photosUrl)
       .then(function (res) {
-        self.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
+
+        try {
+          self.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
+        } catch (error) {
+          console.log('Getting photos failed: ', error)
+        }
+
       })
       .catch(function (err) {
         throw err
