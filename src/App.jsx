@@ -43,7 +43,7 @@ class App extends Component {
         try {
           self.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
         } catch (error) {
-          console.log('Getting photos failed: ', error)
+          console.error('Getting photos failed: ', error)
         }
 
       })
