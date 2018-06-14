@@ -28,9 +28,16 @@ export const isJSON = (str) => {
 export const formatPhotosObject = (photos) => {
   return photos.map(photo => {
     let exifData = photo.exif
-    if (isJSON(photo.exif)) {
-      exifData = JSON.parse(photo.exif)
+
+
+    try {
+      if (isJSON(photo.exif)) {
+        exifData = JSON.parse(photo.exif)
+      }
+    } catch (error) {
+      console.log('Could not parseEXIF data...')
     }
+
     return {
       ...photo,
       "galleryId": photo.objectId,

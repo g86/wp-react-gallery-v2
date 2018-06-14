@@ -144,8 +144,8 @@ class Photo extends Component {
                   Size: {photo.width}x{photo.height}<br />
                   Camera: {String(photo.exifCameraMake).toUpperCase()} {photo.exifCameraModel}<br />
                   ISO: {photo.exifIso} |
-                  Shutter: {photo.exifShutter} |
                   Aperture: f{executeMath(photo.exifAperture)} |
+                  Shutter: {photo.exifShutter} |
                   Focal length: {photo.exifFocalLength}mm<br />
                 </div>
                 <div className="in-gallery_photo-alt">
