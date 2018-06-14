@@ -27,7 +27,7 @@ export const isJSON = (str) => {
 
 export const formatPhotosObject = (photos) => {
   return photos.map(photo => {
-    let exifData = photo.exif
+    /*let exifData = photo.exif
 
 
     try {
@@ -35,8 +35,10 @@ export const formatPhotosObject = (photos) => {
         exifData = JSON.parse(photo.exif)
       }
     } catch (error) {
-      console.log('Could not parseEXIF data...')
-    }
+      console.log('Could not parse EXIF data...')
+    }*/
+
+    photo.exif = null
 
     return {
       ...photo,
