@@ -39,6 +39,7 @@ class App extends Component {
     let self = this
     return Axios.get(photosUrl)
       .then(function (res) {
+        console.log('preloadPhotos', {res})
 
         try {
           self.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
