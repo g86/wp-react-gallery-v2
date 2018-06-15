@@ -42,8 +42,8 @@ class App extends Component {
         console.log('preloadPhotos', {res})
 
         try {
-          // self.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
-          this.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
+          const photos = formatPhotosObject(res.data.galleryPhotos)
+          self.setState({photos})
         } catch (error) {
           console.error('Getting photos failed: ', error)
         }
