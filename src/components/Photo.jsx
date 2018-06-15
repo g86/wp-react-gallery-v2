@@ -8,7 +8,12 @@ import {Parser} from 'expr-eval'
 const MathParser = new Parser()
 
 const executeMath = (expression) => {
-  return MathParser.evaluate(expression)
+  try {
+    return MathParser.evaluate(expression)
+  } catch (error) {
+    console.log('Aperture value not available')
+    return null
+  }
 }
 
 class Photo extends Component {
