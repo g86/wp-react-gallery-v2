@@ -42,7 +42,8 @@ class App extends Component {
         console.log('preloadPhotos', {res})
 
         try {
-          self.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
+          // self.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
+          this.setState({photos: formatPhotosObject(res.data.galleryPhotos)})
         } catch (error) {
           console.error('Getting photos failed: ', error)
         }
@@ -195,10 +196,16 @@ class App extends Component {
       })
   }
 
+  handleReload = (event) => {
+    event.preventDefault()
+    this.preloadPhotos()
+  }
+
   render() {
     const {photos, activePhoto} = this.state
     return (
       <div className="in-gallery">
+        <small><a href='#' onClick={this.handleReload}>Reload gallery</a></small>
         <UploadPhotos onUpload={this.refreshPhotos}/>
         <Photos photos={photos} onClick={this.openModal.bind(this)}
                 onDelete={this.deletePhotoByIndex.bind(this)}
