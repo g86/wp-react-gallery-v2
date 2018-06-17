@@ -81,11 +81,6 @@ class Photo extends Component {
     const {photo, index, onClick, onDelete} = this.props
     const {isEditing, modifiedPhoto, draggablePhotoStyle} = this.state
     const photoHasGeo = ( photo.geo !== '0,0' && photo.geo !== '' )
-
-    if (photo.exif) {
-      console.log(photo.exif)
-    }
-
     const setDeleteIcon = () => { return {__html: deleteIcon}}
     const setUndoIcon = () => { return {__html: undoIcon}}
     const imgSrc = getSizePath(`${RESOURCE_HOST}${photo.photoPath}`,'small')

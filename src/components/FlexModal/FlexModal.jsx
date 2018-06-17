@@ -139,13 +139,14 @@ class FlexModal extends Component {
   }
 
   render() {
-    const {onClose, photo, onNavigation} = this.props
+    const {onClose, photo, onNavigation, nextPhotoPreload} = this.props
     const {imageStyle, imageLoaded} = this.state
 
     if (!photo) {
       return null
     }
 
+    const preloadImgSrc = nextPhotoPreload && getSizePath(`${RESOURCE_HOST}${nextPhotoPreload.photoPath}`,'large') || null
     const imgSrc = getSizePath(`${RESOURCE_HOST}${photo.photoPath}`,'large')
 
     return (
@@ -177,6 +178,11 @@ class FlexModal extends Component {
                  alt={photo.alt}
                  onLoad={this.setImageHeight.bind(this)}
                  ref={(ref) => {this.flexImage = ref}} />
+            {preloadImgSrc &&
+            <img style={{width: 1, height: 1, opacity: 0, position: 'absolute', bottom: 0, left: 0}}
+                 src={preloadImgSrc}
+            />
+            }
           </div>
         </div>
       </div>

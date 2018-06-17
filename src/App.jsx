@@ -54,6 +54,13 @@ class App extends Component {
       })
   }
 
+  getNextPhoto(photos, index) {
+    if (photos[index+1]) {
+      return photos[index+1]
+    }
+    return null
+  }
+
   onNavigation(action, event) {
     event.preventDefault()
     event.stopPropagation()
@@ -78,7 +85,8 @@ class App extends Component {
         if (photos[activeIndex + 1]) {
           this.setState({
             activePhoto: photos[activeIndex + 1],
-            activeIndex: activeIndex + 1
+            activeIndex: activeIndex + 1,
+            nextPhoto: this.getNextPhoto(photos, activeIndex+1)
           })
         } else {
           this.setState({
@@ -103,7 +111,11 @@ class App extends Component {
     event.preventDefault()
     event.stopPropagation()
 
-    this.setState({activePhoto: this.state.photos[index], activeIndex: index})
+    this.setState({
+      activePhoto: this.state.photos[index],
+      activeIndex: index,
+      nextPhoto: this.getNextPhoto(this.state.photos, index)
+    })
   }
 
   refreshPhotos = (newPhotos) => {
@@ -202,7 +214,7 @@ class App extends Component {
   }
 
   render() {
-    const {photos, activePhoto} = this.state
+    const {photos, activePhoto, nextPhoto} = this.state
     return (
       <div className="in-gallery">
         <small><a href='#' onClick={this.handleReload}>Reload gallery</a></small>
@@ -212,6 +224,7 @@ class App extends Component {
                 onSave={this.saveUpdatedInfo.bind(this)}/>
         {activePhoto &&
         <FlexModal photo={activePhoto}
+                   nextPhotoPreload={nextPhoto}
                    onDelete={this.deleteViaModal.bind(this)}
                    onClose={this.closeModal.bind(this)}
                    onNavigation={this.onNavigation.bind(this)}/>}
