@@ -121,7 +121,7 @@
   }
 }
 
-.in-flexModalImageTitle {
+/*.in-flexModalImageTitle {
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -135,6 +135,27 @@
   white-space: nowrap;
   @media all and (max-width: 400px) {
     white-space: normal;
+  }
+}*/
+
+.in-flexModalImageExif {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 10px;
+  width: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 3px 5px;
+  white-space: nowrap;
+  border-top-right-radius: 3px;
+  > strong {
+    text-transform: uppercase;
+  }
+  > span {
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    margin-left: 5px;
+    padding-left: 5px;
   }
 }
 

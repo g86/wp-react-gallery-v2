@@ -171,7 +171,18 @@ class FlexModal extends Component {
                 <i className="material-icons">keyboard_arrow_right</i>
               </span>
             </a>
-            {photo.title && <div className="in-flexModalImageTitle">{photo.title}</div>}
+            {photo.exifCameraMake &&
+            <div className="in-flexModalImageExif">
+              {photo.title !== '' && `${photo.title} - `}Shot with <strong>{photo.exifCameraMake}</strong> {photo.exifCameraModel}
+              {photo.exifIso && <span>ISO{photo.exifIso}</span>}
+              {photo.exifAperture && <span>f{executeMath(photo.exifAperture)}</span>}
+              {photo.exifShutter && <span>{photo.exifShutter}s</span>}
+              {photo.exifFocalLength && <span>{photo.exifFocalLength}mm</span>}
+            </div>
+            }
+            {!photo.exifCameraMake && photo.title !== '' &&
+            <div className="in-flexModalImageExif">{photo.title}</div>
+            }
             <img className={'in-flexImage' + (!imageLoaded && ' in-flexImage-loading')}
                  src={imgSrc}
                  style={imageStyle}
