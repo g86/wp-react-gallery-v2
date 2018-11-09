@@ -61,6 +61,7 @@ class UploadifiedR
 
     $iGalleryExists = $wpdb->get_var("SELECT COUNT(id) FROM impressions_galleries WHERE `id` = '{$_POST['ID']}'");
     if ($iGalleryExists > 0) {
+      unset($aGallery['voteCount']); // this prevents voteCount reset when saving on Admin Panel.
       // update
       $sValues = "";
       foreach ($aGallery as $k => $v) {
