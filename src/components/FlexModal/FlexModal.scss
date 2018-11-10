@@ -44,6 +44,7 @@
   transition-duration: 0s;
   transition-property: filter, transform;
   transform: scale(1);
+  z-index: 1;
   &.in-flexImage-loading {
     filter: blur(10px);
     transform: scale(1.1);
@@ -149,6 +150,7 @@
   padding: 3px 5px;
   white-space: nowrap;
   border-top-right-radius: 3px;
+  z-index: 2;
   > strong {
     text-transform: uppercase;
   }
