@@ -194,7 +194,7 @@ class FlexModal extends Component {
             {!photo.exifCameraMake && photo.title !== '' &&
             <div className="in-flexModalImageExif">{photo.title}</div>
             }
-            <img className={'in-flexImage' + (!imageLoaded && ' in-flexImage-loading')}
+            <img className={'in-flexImage' + (!imageLoaded && ' in-flexImage-loading' || '')}
                  src={imgSrc}
                  style={imageStyle}
                  alt={photo.alt}
