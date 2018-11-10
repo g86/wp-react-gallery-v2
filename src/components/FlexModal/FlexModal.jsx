@@ -2,6 +2,17 @@ import React, {Component} from 'react'
 import {RESOURCE_HOST} from '../../config'
 import Loader from '../../components/Loader'
 import {getSizePath} from '../../lib/helpers'
+import {Parser} from 'expr-eval'
+
+const MathParser = new Parser()
+
+const executeMath = (expression) => {
+  try {
+    return MathParser.evaluate(expression)
+  } catch (error) {
+    console.log('Aperture could not be calculated')
+  }
+}
 
 class FlexModal extends Component {
 
